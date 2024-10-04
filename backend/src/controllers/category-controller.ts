@@ -23,4 +23,15 @@ export const createCategory = async (req: Request, res: Response) => {
   }
 };
 
-const getAllCategory = async (req: Request, res: Response) => {};
+export const getAllCategory = async (req: Request, res: Response) => {
+  try {
+    const categories = await Category.find({});
+    res.status(200).json({
+      message: "success to get all categories",
+      categories: categories,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "failed to get all categories", error });
+  }
+};

@@ -1,15 +1,26 @@
 "use client";
+import { IProduct } from "@/app/utils/interfaces";
+import { apiUrl } from "@/app/utils/util";
 import { Hero } from "@/components/home/page";
 import { FeaturedProductCard, ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { products } from "@/lib/data";
+import axios from "axios";
 import { Heart, Star } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Detail() {
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const getAllProducts = async () => {
+    const response = await axios.get(`${apiUrl}/api/v1/product`);
+    setProducts(response.data.products);
+  };
+  useEffect(() => {
+    getAllProducts();
+  }, []);
   //  type inference
   const [count, setCount] = useState<number>(100);
   const minus = () => {
@@ -173,13 +184,7 @@ export default function Detail() {
             {products.map((product, index) => {
               return (
                 <>
-                  <ProductCard
-                    key={index}
-                    name={product.name}
-                    price={product.price}
-                    image={product.image}
-                    discount={product.discount}
-                  />
+                  <ProductCard key={product._id} product={product} />
                 </>
               );
             })}
