@@ -7,18 +7,32 @@ import { Search } from "lucide-react";
 import { IoMdPerson } from "react-icons/io";
 import Link from "next/link";
 import { useUser } from "@/provider/user-provider";
+import { User, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export const Header = () => {
-  const { user } = useUser();
-  console.log("USER", user);
+  const { user, setUser } = useUser();
+  const router = useRouter();
+  const logOut = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+    setUser(null);
+  };
+
+  // useEffect(() => {}, [user]);
   return (
     <header className="flex justify-between bg-black px-6 py-4 items-center">
       <div className="flex gap-8 items-center">
-        <div className="flex gap-[6px] items-center">
-          <img src="/img/Vector.png" alt="photo" className="w-8 h-[27px]" />
-          <div className="text-white text-sm">ECOMMERCE</div>
-        </div>
-        <div className="text-white text-sm opacity-75">Ангилал</div>
+        <Link href="/">
+          <div className="flex gap-[6px] items-center">
+            <img src="/img/Vector.png" alt="photo" className="w-8 h-[27px]" />
+            <div className="text-white text-sm">ECOMMERCE</div>
+          </div>
+        </Link>
+        <Link href="/category">
+          <div className="text-white text-sm opacity-75">Ангилал</div>
+        </Link>
       </div>
       <div className="bg-[#18181B] rounded-[20px] flex items-center px-4 py-1 gap-2 w-[300px]">
         <Search color="#FAFAFA" size={24} />
@@ -29,9 +43,20 @@ export const Header = () => {
         />
       </div>
       <div className="flex gap-6 items-center">
-        <FaRegHeart color="white" size={24} />
-        <IoCartOutline color="white" size={24} />
-        {user && <img src={""} alt="'profile" />}
+        <Link href="/save">
+          <FaRegHeart color="white" size={24} />{" "}
+        </Link>
+        <Link href="/cart">
+          <IoCartOutline color="white" size={24} />
+        </Link>
+        {user && (
+          <>
+            <Link href="/userinfo">
+              <User color="white" />{" "}
+            </Link>
+            <LogOut color="white" onClick={logOut} />
+          </>
+        )}
         {!user && (
           <>
             <Link href="/signup">

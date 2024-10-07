@@ -22,3 +22,10 @@ export interface ISaved {
   product: IProduct;
   user: object;
 }
+
+export interface ICart {
+  _id: string;
+  product: IProduct;
+  quantity: number;
+  user: object;
+}

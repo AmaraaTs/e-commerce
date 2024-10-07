@@ -4,8 +4,11 @@ import Image from "next/image";
 import { formattedPrice } from "@/lib/utils";
 import { Product } from "@/lib/data";
 import { Button } from "./ui/button";
-import { IProduct, ISaved } from "@/app/utils/interfaces";
+import { ICart, IProduct, ISaved } from "@/app/utils/interfaces";
 import Link from "next/link";
+import { PiTrashLight } from "react-icons/pi";
+import { useState } from "react";
+import { Label } from "@radix-ui/react-label";
 
 const getDiscountedPrice = (price: number, discount: number) => {
   return price - (price * discount) / 100;
@@ -31,7 +34,6 @@ const getDiscountedPrice = (price: number, discount: number) => {
 // };
 
 export const ProductCard = ({ product }: { product: IProduct }) => {
-  console.log("Image", product.images[0]);
   return (
     <Link href={"/product/" + product._id}>
       <div className="relative w-[244px]">
@@ -151,6 +153,45 @@ export const SavedProductCard = ({ product }: { product: ISaved }) => {
         </Button>
       </div>
       <Heart color="red" size={24} strokeWidth={1} className="ml-8" />
+    </div>
+  );
+};
+
+export const CartProductCard = ({ product }: { product: ICart }) => {
+  const [count, setCount] = useState<number>(product.quantity);
+  const minus = () => {
+    setCount(count - 1);
+  };
+  const add = () => {
+    setCount(count + 1);
+  };
+  return (
+    <div className="flex justify-between gap-6 border-[1px] border-[#ECEDF0] rounded-2xl p-4">
+      <img
+        src={product.product.images[0]}
+        alt="photo"
+        className="h-[100px] w-[100px] bg-contain rounded-2xl"
+      />
+      <div className="w-full">
+        <p className="text-base">{product.product.name}</p>
+        <div className="flex items-center mt-1">
+          <button
+            onClick={minus}
+            className="h-8 w-8 flex justify-center items-center border-[1px] border-[#18181B] rounded-full"
+          >
+            -
+          </button>
+          <Label className="text-xs mx-2">{count}</Label>
+          <button
+            onClick={add}
+            className="h-8 w-8 flex justify-center items-center border-[1px] border-[#18181B] rounded-full"
+          >
+            +
+          </button>
+        </div>
+        <p className="text-base mt-2 font-bold">{product.product.price}₮</p>
+      </div>
+      <PiTrashLight size={24} />
     </div>
   );
 };

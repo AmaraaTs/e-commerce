@@ -1,19 +1,25 @@
 "use client";
-import { SavedProductCard } from "@/components/product-card";
+import { ICart } from "@/app/utils/interfaces";
+import { apiUrl } from "@/app/utils/util";
+import { CartProductCard, SavedProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { products } from "@/lib/data";
 import { Label } from "@radix-ui/react-label";
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { PiTrashLight } from "react-icons/pi";
 
 export default function Cart() {
-  const [count, setCount] = useState<number>(1);
-  const minus = () => {
-    setCount(count - 1);
+  const [products, setProducts] = useState<ICart[]>([]);
+  const getAllCartProducts = async () => {
+    const response = await axios.get(`${apiUrl}/api/v1/cart`);
+    setProducts(response.data.cartProducts);
+    console.log("Res", response.data);
   };
-  const add = () => {
-    setCount(count + 1);
-  };
+  useEffect(() => {
+    getAllCartProducts();
+  }, []);
+
   return (
     <main className=" bg-[#f7f7f8] pt-[60px] pb-24">
       <section className="  max-w-[1100px] mx-auto min-h-[calc(100vh-363px)]">
@@ -38,62 +44,9 @@ export default function Cart() {
           </h1>
           <div className="flex flex-col gap-4">
             {/* map */}
-            <div className="flex justify-between gap-6 border-[1px] border-[#ECEDF0] rounded-2xl p-4">
-              <img
-                src="/products/image2.png"
-                alt="photo"
-                className="h-[100px] w-[100px] bg-contain rounded-2xl"
-              />
-              <div className="w-full">
-                <p className="text-base">Chunky Glyph Tee</p>
-                <div className="flex items-center mt-1">
-                  <button
-                    onClick={minus}
-                    className="h-8 w-8 flex justify-center items-center border-[1px] border-[#18181B] rounded-full"
-                  >
-                    -
-                  </button>
-                  <Label className="text-xs mx-2">{count}</Label>
-                  <button
-                    onClick={add}
-                    className="h-8 w-8 flex justify-center items-center border-[1px] border-[#18181B] rounded-full"
-                  >
-                    +
-                  </button>
-                </div>
-                <p className="text-base mt-2 font-bold">120’000₮</p>
-              </div>
-              <PiTrashLight size={24} />
-            </div>
-            {/* map start */}
-            <div className="flex justify-between gap-6 border-[1px] border-[#ECEDF0] rounded-2xl p-4">
-              <img
-                src="/products/image2.png"
-                alt="photo"
-                className="h-[100px] w-[100px] bg-contain rounded-2xl"
-              />
-              <div className="w-full">
-                <p className="text-base">Chunky Glyph Tee</p>
-                <div className="flex items-center mt-1">
-                  <button
-                    onClick={minus}
-                    className="h-8 w-8 flex justify-center items-center border-[1px] border-[#18181B] rounded-full"
-                  >
-                    -
-                  </button>
-                  <Label className="text-xs mx-2">{count}</Label>
-                  <button
-                    onClick={add}
-                    className="h-8 w-8 flex justify-center items-center border-[1px] border-[#18181B] rounded-full"
-                  >
-                    +
-                  </button>
-                </div>
-                <p className="text-base mt-2 font-bold">120’000₮</p>
-              </div>
-              <PiTrashLight size={24} />
-            </div>
-            {/* map end */}
+            {products?.map((product) => {
+              return <CartProductCard key={product._id} product={product} />;
+            })}
           </div>
           <div className="mt-4 flex justify-between">
             <p className="text-[18px]">Нийт төлөх дүн:</p>

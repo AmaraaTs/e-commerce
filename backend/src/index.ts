@@ -9,6 +9,7 @@ import authRoute from "./routes/auth-route";
 import categoryRoute from "./routes/category-route";
 import productRoute from "./routes/product-route";
 import savedRoute from "./routes/saved-route";
+import cartRoute from "./routes/cart-route";
 
 import { connectDB } from "./config/db";
 import { generateHtmlTemplate } from "./utils/generateHtmlTemplate";
@@ -28,6 +29,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/saved", savedRoute);
+app.use("/api/v1/cart", cartRoute);
 
 app.get("/", async (req: Request, res: Response) => {
   res.send("Welcome E-commerce API Server");

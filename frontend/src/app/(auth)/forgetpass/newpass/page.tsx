@@ -40,7 +40,7 @@ const NewPass = () => {
         }),
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         toast.success("Нууц үг амжилттай солигдлоо", { autoClose: 1000 });
         router.push("/login");
       }
