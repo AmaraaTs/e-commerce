@@ -10,16 +10,16 @@ import { useEffect, useState } from "react";
 import { PiTrashLight } from "react-icons/pi";
 
 export default function Cart() {
-  const [products, setProducts] = useState<ICart[]>([]);
+  const [carts, setCarts] = useState<ICart[]>([]);
   const getAllCartProducts = async () => {
     const response = await axios.get(`${apiUrl}/api/v1/cart`);
-    setProducts(response.data.cartProducts);
+    setCarts(response.data.cartProducts);
     console.log("Res", response.data);
   };
   useEffect(() => {
     getAllCartProducts();
   }, []);
-
+  console.log("Carts", carts);
   return (
     <main className=" bg-[#f7f7f8] pt-[60px] pb-24">
       <section className="  max-w-[1100px] mx-auto min-h-[calc(100vh-363px)]">
@@ -44,8 +44,14 @@ export default function Cart() {
           </h1>
           <div className="flex flex-col gap-4">
             {/* map */}
-            {products?.map((product) => {
-              return <CartProductCard key={product._id} product={product} />;
+            {carts[0]?.products.map((product) => {
+              console.log("product", product);
+              return (
+                <CartProductCard
+                  key={product.product._id}
+                  productCart={product}
+                />
+              );
             })}
           </div>
           <div className="mt-4 flex justify-between">

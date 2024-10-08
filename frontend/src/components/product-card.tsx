@@ -4,7 +4,7 @@ import Image from "next/image";
 import { formattedPrice } from "@/lib/utils";
 import { Product } from "@/lib/data";
 import { Button } from "./ui/button";
-import { ICart, IProduct, ISaved } from "@/app/utils/interfaces";
+import { ICart, ICartProducts, IProduct, ISaved } from "@/app/utils/interfaces";
 import Link from "next/link";
 import { PiTrashLight } from "react-icons/pi";
 import { useState } from "react";
@@ -157,8 +157,14 @@ export const SavedProductCard = ({ product }: { product: ISaved }) => {
   );
 };
 
-export const CartProductCard = ({ product }: { product: ICart }) => {
-  const [count, setCount] = useState<number>(product.quantity);
+export const CartProductCard = ({
+  productCart,
+}: {
+  productCart: ICartProducts;
+}) => {
+  // console.log("product in Cat", product);
+  const { product } = productCart;
+  const [count, setCount] = useState<number>(productCart.quantity);
   const minus = () => {
     setCount(count - 1);
   };
@@ -168,12 +174,12 @@ export const CartProductCard = ({ product }: { product: ICart }) => {
   return (
     <div className="flex justify-between gap-6 border-[1px] border-[#ECEDF0] rounded-2xl p-4">
       <img
-        src={product.product.images[0]}
+        src={product.images[0]}
         alt="photo"
         className="h-[100px] w-[100px] bg-contain rounded-2xl"
       />
       <div className="w-full">
-        <p className="text-base">{product.product.name}</p>
+        <p className="text-base">{product.name}</p>
         <div className="flex items-center mt-1">
           <button
             onClick={minus}
@@ -189,7 +195,7 @@ export const CartProductCard = ({ product }: { product: ICart }) => {
             +
           </button>
         </div>
-        <p className="text-base mt-2 font-bold">{product.product.price}₮</p>
+        <p className="text-base mt-2 font-bold">{product.price}₮</p>
       </div>
       <PiTrashLight size={24} />
     </div>

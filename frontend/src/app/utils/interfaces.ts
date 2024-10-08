@@ -25,7 +25,12 @@ export interface ISaved {
 
 export interface ICart {
   _id: string;
+  user: string;
+  products: [{ product: IProduct; quantity: number }];
+  totalAmount: number;
+}
+
+export interface ICartProducts {
   product: IProduct;
   quantity: number;
-  user: object;
 }
