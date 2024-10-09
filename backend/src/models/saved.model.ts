@@ -2,22 +2,26 @@ import { model, Schema } from "mongoose";
 
 interface ISaved {
   _id: Schema.Types.ObjectId;
-  product: Schema.Types.ObjectId;
   user: Schema.Types.ObjectId;
+  products: [{ product: Schema.Types.ObjectId }];
 }
 
 const savedSchema = new Schema<ISaved>(
   {
-    product: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "Product",
-    },
     user: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: "User",
     },
+    products: [
+      {
+        product: {
+          type: Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

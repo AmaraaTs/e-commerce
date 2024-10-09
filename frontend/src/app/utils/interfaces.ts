@@ -19,8 +19,12 @@ export interface ICategory {
 
 export interface ISaved {
   _id: string;
+  user: string;
+  products: [{ product: IProduct }];
+}
+
+export interface ISavedProducts {
   product: IProduct;
-  user: object;
 }
 
 export interface ICart {

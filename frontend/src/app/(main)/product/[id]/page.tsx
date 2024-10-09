@@ -10,56 +10,68 @@ import { products } from "@/lib/data";
 import axios from "axios";
 import { Heart, Star } from "lucide-react";
 import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+// interface IProduct {
+//   name: string;
+//   images: [string];
+//   price: number;
+//   description: string;
+// }
+
 export default function Detail() {
+  const router = useRouter();
+  const { id } = useParams();
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [bigImgIdx, setBigImgIdx] = useState<number>(0);
   const getAllProducts = async () => {
     const response = await axios.get(`${apiUrl}/api/v1/product`);
     setProducts(response.data.products);
   };
+  const [product, setProduct] = useState<IProduct | null>(null);
+  const getProduct = async () => {
+    const response = await axios.get(`${apiUrl}/api/v1/product/${id}`);
+    setProduct(response.data.product);
+  };
   useEffect(() => {
     getAllProducts();
+    getProduct();
   }, []);
   //  type inference
-  const [count, setCount] = useState<number>(100);
+  const [count, setCount] = useState<number>(1);
   const minus = () => {
     setCount(count - 1);
   };
   const add = () => {
     setCount(count + 1);
   };
+  const getBigImg = (idx: number) => {
+    setBigImgIdx(idx);
+  };
+
   return (
     <main>
       <section className="mt-[60px] mb-24 max-w-[1100px] mx-auto  ">
-        <div className="flex gap-5">
+        <div className="flex gap-16">
           <div className="flex gap-5 items-center h-[600px]">
             <div className="flex flex-col gap-2">
-              <Image
-                src="/products/image2.png"
-                alt="image1"
-                width={67}
-                height={67}
-                className="rounded-lg"
-              />
-              <Image
-                src="/products/image2.png"
-                alt="image1"
-                width={67}
-                height={67}
-                className="rounded-lg"
-              />
-              <Image
-                src="/products/image2.png"
-                alt="image1"
-                width={67}
-                height={67}
-                className="rounded-lg"
-              />
+              {product?.images?.map((image, idx) => {
+                return (
+                  <Image
+                    src={image}
+                    alt="image1"
+                    width={67}
+                    height={67}
+                    className="rounded-lg"
+                    onClick={() => getBigImg(idx)}
+                  />
+                );
+              })}
             </div>
             <div>
               <Image
-                src="/products/image2.png"
+                src={product?.images[bigImgIdx] || "/products/image1.png"}
                 alt="image1"
                 width={422}
                 height={520}
@@ -69,16 +81,18 @@ export default function Detail() {
           </div>
           <div>
             <div className="mt-[100px] flex flex-col gap-4">
-              <span className="border-[1px] border-[#2563EB] px-[10px] py-[2px] rounded-full text-xs text-[#09090B]">
-                Шинэ
-              </span>
+              {product?.isNew === true ? (
+                <span className="border-[1px] border-[#2563EB] px-[10px] py-[2px] rounded-full text-xs text-[#09090B]">
+                  Шинэ
+                </span>
+              ) : (
+                <span></span>
+              )}
               <div className="flex gap-2 items-center">
-                <p className="text-2xl font-bold">Wildflower Hoodie</p>
+                <p className="text-2xl font-bold">{product?.name}</p>
                 <Heart size={20} strokeWidth={1} className="" />
               </div>
-              <p className="text-base">
-                Зэрлэг цэцгийн зурагтай даавуун материалтай цамц
-              </p>
+              <p className="text-base w-[400px]">{product?.description}</p>
               <div>
                 <p className="text-sm mb-2">Хэмжээний заавар</p>
                 <div className="flex gap-1">
@@ -109,7 +123,7 @@ export default function Detail() {
                 </button>
               </div>
               <div>
-                <p className="text-xl font-bold mb-2">120000</p>
+                <p className="text-xl font-bold mb-2">{product?.price}₮</p>
                 <Button className="bg-[#2563EB] px-9 py-2 rounded-full text-sm">
                   Сагсанд нэмэх
                 </Button>

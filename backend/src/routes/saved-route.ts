@@ -1,8 +1,11 @@
 import { Router } from "express";
-import { getAllSavedProduct } from "../controllers/saved-controller";
+import {
+  createSaved,
+  getAllSavedProduct,
+} from "../controllers/saved-controller";
 
 const router = Router();
 
-router.route("/").get(getAllSavedProduct);
+router.route("/").get(getAllSavedProduct).post(createSaved);
 
 export default router;

@@ -4,7 +4,13 @@ import Image from "next/image";
 import { formattedPrice } from "@/lib/utils";
 import { Product } from "@/lib/data";
 import { Button } from "./ui/button";
-import { ICart, ICartProducts, IProduct, ISaved } from "@/app/utils/interfaces";
+import {
+  ICart,
+  ICartProducts,
+  IProduct,
+  ISaved,
+  ISavedProducts,
+} from "@/app/utils/interfaces";
 import Link from "next/link";
 import { PiTrashLight } from "react-icons/pi";
 import { useState } from "react";
@@ -132,22 +138,24 @@ const PriceWithDiscount = ({
   );
 };
 
-export const SavedProductCard = ({ product }: { product: ISaved }) => {
+export const SavedProductCard = ({
+  productCart,
+}: {
+  productCart: ISavedProducts;
+}) => {
+  const { product } = productCart;
   return (
     <div className="flex w-full rounded-2xl border-[1px] border[#ECEDF0] p-4 bg-white">
       <Image
-        src={product.product.images[0]}
+        src={product.images[0]}
         alt="image1"
         width={100}
         height={100}
         className="rounded-lg"
       />
       <div className=" ml-6 w-full">
-        <h3 className="text-base">{product.product.name}</h3>
-        <PriceWithDiscount
-          price={product.product.price}
-          discount={product.product.discount}
-        />
+        <h3 className="text-base">{product.name}</h3>
+        <PriceWithDiscount price={product.price} discount={product.discount} />
         <Button className="bg-[#2563EB] px-3 py-2 rounded-full text-sm font-medium mt-2">
           Сагсанд нэмэх
         </Button>

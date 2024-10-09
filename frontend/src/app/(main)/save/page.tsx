@@ -25,8 +25,13 @@ export default function Save() {
             <span className="font-medium text-[#5E6166]">(3)</span>
           </h1>
           <div className="flex flex-col gap-4">
-            {products?.map((product) => {
-              return <SavedProductCard key={product._id} product={product} />;
+            {products[0]?.products.map((product) => {
+              return (
+                <SavedProductCard
+                  key={product.product._id}
+                  productCart={product}
+                />
+              );
             })}
           </div>
         </div>
