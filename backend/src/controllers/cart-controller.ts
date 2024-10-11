@@ -3,7 +3,9 @@ import Cart from "../models/cart.model";
 
 export const getAllCartProduct = async (req: Request, res: Response) => {
   try {
-    const cartProducts = await Cart.find({})
+    const { email } = req.body;
+    const cartProducts = await Cart.find({ email: email })
+      .populate("user")
       .populate("products.product")
       .exec();
     res.status(200).json({

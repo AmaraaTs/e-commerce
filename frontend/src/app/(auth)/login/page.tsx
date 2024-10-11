@@ -7,9 +7,11 @@ import axios from "axios";
 import { apiUrl } from "@/app/utils/util";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const router = useRouter();
+  const [iseEyeOpen, setIsEyeOpen] = useState<boolean>(false);
 
   interface IUser {
     email: string;
@@ -54,14 +56,29 @@ const Login = () => {
               setUserData({ ...userData, email: e.target.value })
             }
           ></Input>
-          <Input
-            type="password"
-            placeholder="Нууц үг"
-            className="w-full rounded-[18px] px-3 py-1 text-sm"
-            onChange={(e) =>
-              setUserData({ ...userData, password: e.target.value })
-            }
-          ></Input>
+          <div className="flex justify-end items-center">
+            <Input
+              type={iseEyeOpen ? "text" : "password"}
+              placeholder="Нууц үг"
+              className="w-full rounded-[18px] px-3 py-1 text-sm"
+              onChange={(e) =>
+                setUserData({ ...userData, password: e.target.value })
+              }
+            ></Input>
+            {iseEyeOpen ? (
+              <FaRegEyeSlash
+                className="flex absolute mr-5"
+                color="gray"
+                onClick={() => setIsEyeOpen(false)}
+              />
+            ) : (
+              <FaRegEye
+                className="flex absolute mr-5"
+                color="gray"
+                onClick={() => setIsEyeOpen(true)}
+              />
+            )}
+          </div>
           <Button
             className="w-full rounded-[18px] px-4 py-2 bg-[#2563EB] text-white"
             onClick={login}

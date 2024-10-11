@@ -14,7 +14,7 @@ export default function Cart() {
   const getAllCartProducts = async () => {
     const response = await axios.get(`${apiUrl}/api/v1/cart`);
     setCarts(response.data.cartProducts);
-    console.log("Res", response.data);
+    // console.log("Res", response.data);
   };
   useEffect(() => {
     getAllCartProducts();
@@ -40,7 +40,8 @@ export default function Cart() {
         {/* sags */}
         <div className="bg-white p-8 rounded-2xl mt-[58px]">
           <h1 className="text-xl font-bold mb-4">
-            1. Сагс <span className="text-[#71717A] font-medium">(4)</span>
+            1. Сагс{" "}
+            <span className="text-[#71717A] font-medium">({carts.length})</span>
           </h1>
           <div className="flex flex-col gap-4">
             {/* map */}

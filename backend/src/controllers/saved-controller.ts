@@ -4,6 +4,7 @@ import Saved from "../models/saved.model";
 export const getAllSavedProduct = async (req: Request, res: Response) => {
   try {
     const savedProducts = await Saved.find({})
+      .populate("user")
       .populate("products.product")
       .exec();
     res.status(200).json({

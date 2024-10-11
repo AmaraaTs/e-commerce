@@ -63,31 +63,6 @@ export const ProductCard = ({ product }: { product: IProduct }) => {
   );
 };
 
-// export const FeaturedProductCard = ({
-//   name,
-//   price,
-//   image,
-//   discount,
-// }: Product) => {
-//   return (
-//     <div className="relative col-span-2 row-span-10 mb-14">
-//       <div className="relative w-full h-full">
-//         <Image
-//           src={image}
-//           alt="image1"
-//           fill={true}
-//           className="rounded-lg -z-10"
-//         />
-//         <Heart size={22} strokeWidth={1} className="absolute top-4 right-4" />
-//       </div>
-//       <div className="mt-2">
-//         <h3 className="font-light">{name}</h3>
-//         <PriceWithDiscount price={price} discount={discount} />
-//       </div>
-//     </div>
-//   );
-// };
-
 export const FeaturedProductCard = ({ product }: { product: IProduct }) => {
   return (
     <div className="relative col-span-2 row-span-10 mb-14">
@@ -146,13 +121,15 @@ export const SavedProductCard = ({
   const { product } = productCart;
   return (
     <div className="flex w-full rounded-2xl border-[1px] border[#ECEDF0] p-4 bg-white">
-      <Image
-        src={product.images[0]}
-        alt="image1"
-        width={100}
-        height={100}
-        className="rounded-lg"
-      />
+      <Link href={"/product/" + product._id}>
+        <Image
+          src={product.images[0]}
+          alt="image1"
+          width={100}
+          height={100}
+          className="rounded-lg"
+        />
+      </Link>
       <div className=" ml-6 w-full">
         <h3 className="text-base">{product.name}</h3>
         <PriceWithDiscount price={product.price} discount={product.discount} />
@@ -174,18 +151,24 @@ export const CartProductCard = ({
   const { product } = productCart;
   const [count, setCount] = useState<number>(productCart.quantity);
   const minus = () => {
-    setCount(count - 1);
+    if (count === 1) {
+      setCount(1);
+    } else {
+      setCount(count - 1);
+    }
   };
   const add = () => {
     setCount(count + 1);
   };
   return (
     <div className="flex justify-between gap-6 border-[1px] border-[#ECEDF0] rounded-2xl p-4">
-      <img
-        src={product.images[0]}
-        alt="photo"
-        className="h-[100px] w-[100px] bg-contain rounded-2xl"
-      />
+      <Link href={"/product/" + product._id}>
+        <img
+          src={product.images[0]}
+          alt="photo"
+          className="h-[100px] w-[100px] bg-contain rounded-2xl"
+        />
+      </Link>
       <div className="w-full">
         <p className="text-base">{product.name}</p>
         <div className="flex items-center mt-1">

@@ -11,6 +11,23 @@ export interface IProduct {
   category: object;
 }
 
+interface IUser {
+  _id: string;
+  firstname: String;
+  lastname: String;
+  email: String;
+  password: String;
+  phoneNumber?: String;
+  role: String;
+  profile_img: String;
+  address: String;
+  otp: String;
+  passwordResetToken: String;
+  passwordResetTokenExpire: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface ICategory {
   _id: string;
   name: string;
@@ -19,7 +36,7 @@ export interface ICategory {
 
 export interface ISaved {
   _id: string;
-  user: string;
+  user: IUser;
   products: [{ product: IProduct }];
 }
 

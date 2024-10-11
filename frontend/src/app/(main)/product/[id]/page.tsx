@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { products } from "@/lib/data";
 import axios from "axios";
-import { Heart, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Rating, Star } from "@smastrom/react-rating";
+import "@smastrom/react-rating/style.css";
 
 // interface IProduct {
 //   name: string;
@@ -25,6 +27,7 @@ export default function Detail() {
   const { id } = useParams();
   const [products, setProducts] = useState<IProduct[]>([]);
   const [bigImgIdx, setBigImgIdx] = useState<number>(0);
+  const [rating, setRating] = useState(5);
   const getAllProducts = async () => {
     const response = await axios.get(`${apiUrl}/api/v1/product`);
     setProducts(response.data.products);
@@ -41,13 +44,23 @@ export default function Detail() {
   //  type inference
   const [count, setCount] = useState<number>(1);
   const minus = () => {
-    setCount(count - 1);
+    if (count === 1) {
+      setCount(1);
+    } else {
+      setCount(count - 1);
+    }
   };
   const add = () => {
     setCount(count + 1);
   };
   const getBigImg = (idx: number) => {
     setBigImgIdx(idx);
+  };
+
+  const starStyles = {
+    itemShapes: Star,
+    activeFillColor: "#FDE047",
+    inactiveFillColor: "#FFFFFF",
   };
 
   return (
@@ -138,12 +151,15 @@ export default function Detail() {
                     бүгдийг хураах
                   </span>
                 </div>
-                <div className="flex gap-1 items-center">
-                  <Star color="yellow" size={24} />
-                  <Star color="yellow" size={24} />
-                  <Star color="yellow" size={24} />
-                  <Star color="yellow" size={24} />
-                  <Star color="yellow" size={24} />
+                <div className="flex gap-1 items-center  mt-1">
+                  <Rating
+                    style={{ maxWidth: 100 }}
+                    value={rating}
+                    className="h-[20px] w-[20px]"
+                    itemStyles={starStyles}
+                    readOnly
+                  />
+
                   <p className="text-[#09090B] text-sm font-bold">4.6</p>
                   <span className="text-[#71717A] text-sm ">(24)</span>
                 </div>
@@ -152,13 +168,17 @@ export default function Detail() {
               <div className="mt-6">
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center">
-                    <p className="text-sm text-[#09090B] font-bold">Saraa</p>
+                    <p className="text-sm text-[#09090B] font-bold mr-1">
+                      Saraa
+                    </p>
                     <div className="flex gap-1">
-                      <Star color="yellow" size={24} />
-                      <Star color="yellow" size={24} />
-                      <Star color="yellow" size={24} />
-                      <Star color="yellow" size={24} />
-                      <Star color="yellow" size={24} />
+                      <Rating
+                        style={{ maxWidth: 100 }}
+                        value={rating}
+                        className="h-[16px] w-[16px]"
+                        itemStyles={starStyles}
+                        readOnly
+                      />
                     </div>
                   </div>
                   <p className="text-[#71717A] text-sm ">
@@ -172,11 +192,14 @@ export default function Detail() {
                   Одоор үнэлэх:
                 </p>
                 <div className="flex mt-2">
-                  <Star color="yellow" size={24} />
-                  <Star color="yellow" size={24} />
-                  <Star color="yellow" size={24} />
-                  <Star color="yellow" size={24} />
-                  <Star color="yellow" size={24} />
+                  <Rating
+                    style={{ maxWidth: 100 }}
+                    value={rating}
+                    className="h-[20px] w-[20px]"
+                    itemStyles={starStyles}
+                    onChange={setRating}
+                    isRequired
+                  />
                 </div>
                 <p className="text-sm text-[#09090B] font-medium mt-6 mb-2">
                   Сэтгэгдэл үлдээх:
