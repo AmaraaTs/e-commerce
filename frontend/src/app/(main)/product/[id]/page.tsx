@@ -28,6 +28,7 @@ export default function Detail() {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [bigImgIdx, setBigImgIdx] = useState<number>(0);
   const [rating, setRating] = useState(5);
+  const [isOpenDetail, setIsOpenDetail] = useState<boolean>(false);
   const getAllProducts = async () => {
     const response = await axios.get(`${apiUrl}/api/v1/product`);
     setProducts(response.data.products);
@@ -147,9 +148,25 @@ export default function Detail() {
               <div>
                 <div className="flex gap-4">
                   <p className="text-sm text-[#09090B]">Үнэлгээ</p>
-                  <span className="text-sm text-[#2563EB] underline">
-                    бүгдийг хураах
-                  </span>
+                  {isOpenDetail ? (
+                    <button
+                      className="text-sm text-[#2563EB] underline"
+                      onClick={() => {
+                        setIsOpenDetail(false);
+                      }}
+                    >
+                      бүгдийг хураах
+                    </button>
+                  ) : (
+                    <button
+                      className="text-sm text-[#2563EB] underline"
+                      onClick={() => {
+                        setIsOpenDetail(true);
+                      }}
+                    >
+                      бүгдийг харах
+                    </button>
+                  )}
                 </div>
                 <div className="flex gap-1 items-center  mt-1">
                   <Rating
@@ -165,53 +182,56 @@ export default function Detail() {
                 </div>
               </div>
               {/* commends */}
-              <div className="mt-6">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center">
-                    <p className="text-sm text-[#09090B] font-bold mr-1">
-                      Saraa
+              {isOpenDetail ? (
+                <>
+                  <div className="mt-6">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center">
+                        <p className="text-sm text-[#09090B] font-bold mr-1">
+                          Saraa
+                        </p>
+                        <div className="flex gap-1">
+                          <Rating
+                            style={{ maxWidth: 100 }}
+                            value={rating}
+                            className="h-[16px] w-[16px]"
+                            itemStyles={starStyles}
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                      <p className="text-[#71717A] text-sm ">
+                        Ваав материал ёстой гоё байна 😍
+                      </p>
+                    </div>
+                  </div>
+                  <div className="rounded-2xl bg-[#F4F4F5] p-6 mt-6">
+                    <p className="text-sm text-[#09090B] font-medium">
+                      Одоор үнэлэх:
                     </p>
-                    <div className="flex gap-1">
+                    <div className="flex mt-2">
                       <Rating
                         style={{ maxWidth: 100 }}
                         value={rating}
-                        className="h-[16px] w-[16px]"
+                        className="h-[20px] w-[20px]"
                         itemStyles={starStyles}
-                        readOnly
+                        onChange={setRating}
+                        isRequired
                       />
                     </div>
+                    <p className="text-sm text-[#09090B] font-medium mt-6 mb-2">
+                      Сэтгэгдэл үлдээх:
+                    </p>
+                    <Input
+                      placeholder="Энд бичнэ үү"
+                      className="bg-white border-[1px] border-[#E4E4E7] text-sm text-[#09090B] rounded-md px-3 py-2 h-[94px]"
+                    />
+                    <Button className="bg-[#2563EB] px-9 py-2 rounded-full text-sm mt-6 font-medium">
+                      Үнэлэх
+                    </Button>
                   </div>
-                  <p className="text-[#71717A] text-sm ">
-                    Ваав материал ёстой гоё байна 😍
-                  </p>
-                </div>
-              </div>
-              {/* rate now */}
-              <div className="rounded-2xl bg-[#F4F4F5] p-6 mt-6">
-                <p className="text-sm text-[#09090B] font-medium">
-                  Одоор үнэлэх:
-                </p>
-                <div className="flex mt-2">
-                  <Rating
-                    style={{ maxWidth: 100 }}
-                    value={rating}
-                    className="h-[20px] w-[20px]"
-                    itemStyles={starStyles}
-                    onChange={setRating}
-                    isRequired
-                  />
-                </div>
-                <p className="text-sm text-[#09090B] font-medium mt-6 mb-2">
-                  Сэтгэгдэл үлдээх:
-                </p>
-                <Input
-                  placeholder="Энд бичнэ үү"
-                  className="bg-white border-[1px] border-[#E4E4E7] text-sm text-[#09090B] rounded-md px-3 py-2 h-[94px]"
-                />
-                <Button className="bg-[#2563EB] px-9 py-2 rounded-full text-sm mt-6 font-medium">
-                  Үнэлэх
-                </Button>
-              </div>
+                </>
+              ) : null}
             </div>
           </div>
         </div>

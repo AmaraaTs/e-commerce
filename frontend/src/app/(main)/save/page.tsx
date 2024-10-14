@@ -40,7 +40,7 @@ export default function Save() {
       <section className="  max-w-[1100px] mx-auto min-h-[calc(100vh-363px)]">
         <div>
           <h1 className="text-xl font-bold mb-4">
-            Хадгалсан бараа{" "}
+            Хадгалсан бараа
             <span className="font-medium text-[#5E6166]">({count})</span>
           </h1>
           {products.map((productItem) => {

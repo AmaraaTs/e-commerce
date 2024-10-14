@@ -5,11 +5,12 @@ import { Hero } from "@/components/home/page";
 import { FeaturedProductCard, ProductCard } from "@/components/product-card";
 import { products } from "@/lib/data";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function Category() {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [catergories, setCategories] = useState<ICategory[]>([]);
+  const [handleCategory, setHandleCategory] = useState<string>();
   const getAllProducts = async () => {
     const response = await axios.get(`${apiUrl}/api/v1/product`);
     setProducts(response.data.products);
@@ -24,14 +25,22 @@ export default function Category() {
     getAllCategories();
   }, []);
   //  type inference
-  const [count, setCount] = useState<number>(100);
-  const minus = () => {
-    setCount(count - 1);
+  // const [count, setCount] = useState<number>(100);
+  // const minus = () => {
+  //   setCount(count - 1);
+  // };
+  // const add = () => {
+  //   setCount(count + 1);
+  // };
+  // console.log("Categories", catergories);
+
+  const letHandleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHandleCategory(e.target.value);
   };
-  const add = () => {
-    setCount(count + 1);
-  };
-  console.log("Categories", catergories);
+  // console.log("Handle:", handleCategory);
+
+  useEffect(() => {}, []);
+
   return (
     <main>
       <section className="mt-[60px] mb-24 max-w-[1100px] mx-auto ">
@@ -44,8 +53,8 @@ export default function Category() {
                   <div className="flex gap-2 mt-4">
                     <input
                       type="checkbox"
-                      defaultChecked
                       className="checkbox"
+                      onChange={letHandleCategory}
                     />
                     <p>{category.name}</p>
                   </div>
@@ -55,7 +64,7 @@ export default function Category() {
             <div className="mt-12">
               <p className="text-base font-bold">Хэмжээ</p>
               <div className="flex gap-2 mt-4">
-                <input type="checkbox" defaultChecked className="checkbox" />
+                <input type="checkbox" className="checkbox" />
                 <p>Free</p>
               </div>
             </div>

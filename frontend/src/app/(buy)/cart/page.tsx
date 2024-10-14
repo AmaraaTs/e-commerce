@@ -4,21 +4,28 @@ import { apiUrl } from "@/app/utils/util";
 import { CartProductCard, SavedProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { products } from "@/lib/data";
+import { UserContext } from "@/provider/user-provider";
 import { Label } from "@radix-ui/react-label";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PiTrashLight } from "react-icons/pi";
 
 export default function Cart() {
+  const { user, setUser } = useContext(UserContext);
   const [carts, setCarts] = useState<ICart[]>([]);
+
   const getAllCartProducts = async () => {
-    const response = await axios.get(`${apiUrl}/api/v1/cart`);
+    if (!user) return;
+
+    const response = await axios.get(
+      `${apiUrl}/api/v1/cart?userId=${user?._id}`
+    );
     setCarts(response.data.cartProducts);
     // console.log("Res", response.data);
   };
   useEffect(() => {
     getAllCartProducts();
-  }, []);
+  }, [user]);
   console.log("Carts", carts);
   return (
     <main className=" bg-[#f7f7f8] pt-[60px] pb-24">

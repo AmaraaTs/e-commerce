@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface IUser {
+  _id: string;
   firstname: string;
   email: string;
 }
@@ -38,9 +39,11 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Error fetching user data:", error);
     }
   };
+
   useEffect(() => {
     fetchUserData();
-  }, [user]);
+  }, []);
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}

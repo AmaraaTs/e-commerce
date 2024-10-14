@@ -13,8 +13,11 @@ import {
 } from "@/app/utils/interfaces";
 import Link from "next/link";
 import { PiTrashLight } from "react-icons/pi";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Label } from "@radix-ui/react-label";
+import axios from "axios";
+import { apiUrl } from "@/app/utils/util";
+import { UserContext } from "@/provider/user-provider";
 
 const getDiscountedPrice = (price: number, discount: number) => {
   return price - (price * discount) / 100;
@@ -40,26 +43,51 @@ const getDiscountedPrice = (price: number, discount: number) => {
 // };
 
 export const ProductCard = ({ product }: { product: IProduct }) => {
+  const { user, setUser } = useContext(UserContext);
+
+  const postSavedProduct = async (productId: string) => {
+    // console.log("productId", productId);
+    try {
+      const response = await axios.post(`${apiUrl}/api/v1/saved`, {
+        userId: user?._id,
+        productId,
+      });
+      if (response.status === 200) {
+        console.log("res", response.data);
+      }
+    } catch (error) {
+      console.error("There was an error signing in:", error);
+    }
+    // console.log("Res", response.data);
+  };
+
   return (
-    <Link href={"/product/" + product._id}>
-      <div className="relative w-[244px]">
-        <Image
-          src={product.images[0]}
-          alt="image"
-          width={244}
-          height={331}
-          className="rounded-lg"
-        />
-        <Heart size={22} strokeWidth={1} className="absolute top-4 right-4" />
-        <div className="mt-2">
-          <h3 className="font-light">{product.name}</h3>
-          <PriceWithDiscount
-            price={product.price}
-            discount={product.discount}
+    <>
+      <Link href={"/product/" + product._id}>
+        <div className="relative w-[244px]">
+          <Image
+            src={product.images[0]}
+            alt="image"
+            width={244}
+            height={331}
+            className="rounded-lg"
           />
+          <div className="mt-2">
+            <h3 className="font-light">{product.name}</h3>
+            <PriceWithDiscount
+              price={product.price}
+              discount={product.discount}
+            />
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      <Heart
+        size={22}
+        strokeWidth={1}
+        // className="absolute top-4 right-4"
+        onClick={() => postSavedProduct(product?._id)}
+      />
+    </>
   );
 };
 
@@ -148,6 +176,7 @@ export const CartProductCard = ({
   productCart: ICartProducts;
 }) => {
   // console.log("product in Cat", product);
+  const [totalSalesOne, setTotalSalesOne] = useState<number>(0);
   const { product } = productCart;
   const [count, setCount] = useState<number>(productCart.quantity);
   const minus = () => {
@@ -160,6 +189,16 @@ export const CartProductCard = ({
   const add = () => {
     setCount(count + 1);
   };
+  const calculateTotal = () => {
+    setTotalSalesOne(product.price * product.quantity);
+  };
+
+  console.log("TOTAL: ", product.price, product.quantity);
+
+  useEffect(() => {
+    calculateTotal();
+  }, [product]);
+
   return (
     <div className="flex justify-between gap-6 border-[1px] border-[#ECEDF0] rounded-2xl p-4">
       <Link href={"/product/" + product._id}>
@@ -186,7 +225,7 @@ export const CartProductCard = ({
             +
           </button>
         </div>
-        <p className="text-base mt-2 font-bold">{product.price}₮</p>
+        <p className="text-base mt-2 font-bold">{totalSalesOne}₮</p>
       </div>
       <PiTrashLight size={24} />
     </div>
