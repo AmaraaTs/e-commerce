@@ -9,23 +9,49 @@ import { Label } from "@radix-ui/react-label";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { PiTrashLight } from "react-icons/pi";
+import { toast } from "react-toastify";
 
 export default function Cart() {
-  const { user, setUser } = useContext(UserContext);
-  const [carts, setCarts] = useState<ICart[]>([]);
+  // const { user, setUser } = useContext(UserContext);
+  const [carts, setCarts] = useState<ICart>();
 
-  const getAllCartProducts = async () => {
-    if (!user) return;
+  // const [carts, setCarts] = useState<ICart[]>([]);
 
-    const response = await axios.get(
-      `${apiUrl}/api/v1/cart?userId=${user?._id}`
-    );
-    setCarts(response.data.cartProducts);
-    // console.log("Res", response.data);
+  // const getAllCartProducts = async () => {
+  //   if (!user) return;
+
+  //   const response = await axios.get(
+  //     `${apiUrl}/api/v1/cart?userId=${user?._id}`
+  //   );
+  //   setCarts(response.data.cartProducts);
+  //   // console.log("Res", response.data);
+  // };
+  // useEffect(() => {
+  //   getAllCartProducts();
+  // }, [user]);
+
+  const getCartProducts = async () => {
+    try {
+      const userToken = localStorage.getItem("token");
+      if (!userToken) {
+        console.log("No user token found");
+        return;
+      }
+
+      const response = await axios.get(`${apiUrl}/cart/get-cart`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+
+      if (response.status === 200) {
+        setCarts(response.data.cartProducts);
+      }
+    } catch (error) {
+      console.log("Failed to add cart", error);
+    }
   };
   useEffect(() => {
-    getAllCartProducts();
-  }, [user]);
+    getCartProducts();
+  }, []);
   console.log("Carts", carts);
   return (
     <main className=" bg-[#f7f7f8] pt-[60px] pb-24">
@@ -48,11 +74,13 @@ export default function Cart() {
         <div className="bg-white p-8 rounded-2xl mt-[58px]">
           <h1 className="text-xl font-bold mb-4">
             1. Сагс{" "}
-            <span className="text-[#71717A] font-medium">({carts.length})</span>
+            <span className="text-[#71717A] font-medium">
+              ({carts?.products.length})
+            </span>
           </h1>
           <div className="flex flex-col gap-4">
             {/* map */}
-            {carts[0]?.products.map((product) => {
+            {carts?.products.map((product) => {
               console.log("product", product);
               return (
                 <CartProductCard

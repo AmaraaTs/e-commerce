@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { Rating, Star } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { useUser } from "@/provider/user-provider";
+import { toast } from "react-toastify";
 
 // interface IProduct {
 //   name: string;
@@ -31,27 +32,39 @@ export default function Detail() {
   const [bigImgIdx, setBigImgIdx] = useState<number>(0);
   const [rating, setRating] = useState(5);
   const [isOpenDetail, setIsOpenDetail] = useState<boolean>(false);
-  const getAllProducts = async () => {
-    const response = await axios.get(`${apiUrl}/api/v1/product`);
-    setProducts(response.data.products);
-  };
   const [product, setProduct] = useState<IProduct | null>(null);
-  const getProduct = async () => {
-    const response = await axios.get(`${apiUrl}/api/v1/product/${id}`);
-    setProduct(response.data.product);
+
+  const getAllProducts = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/v1/product`);
+      if (response.status === 200) {
+        setProducts(response.data.products);
+      }
+    } catch (error) {
+      console.log("Error fetching data", error);
+    }
   };
-  useEffect(() => {
-    getAllProducts();
-    getProduct();
-  }, []);
+
+  const getProduct = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/v1/product/${id}`);
+      if (response.status === 200) {
+        setProduct(response.data.product);
+      }
+    } catch (error) {
+      console.log("Error fetching data", error);
+    }
+  };
+
   //  type inference
   const [count, setCount] = useState<number>(1);
   const minus = () => {
-    if (count === 1) {
-      setCount(1);
-    } else {
-      setCount(count - 1);
-    }
+    // if (count === 1) {
+    //   setCount(1);
+    // } else {
+    //   setCount(count - 1);
+    // }
+    setCount(Math.max(1, count - 1));
   };
   const add = () => {
     setCount(count + 1);
@@ -67,16 +80,29 @@ export default function Detail() {
   };
   // console.log("user", user);
 
-  // const addToCart = async () => {
-  //   try {
-  //     const response = await axios.post(`${apiUrl}/cart/create-cart`, {
-  //       userId: user?._id,
-  //       productId: id,
-  //       quantity: productQuantity,
-  //     });
-  //   } catch (error) {}
-  // };
+  const addToCart = async () => {
+    try {
+      const res = await axios.post(`${apiUrl}/cart/create-cart`, {
+        userId: user?._id,
+        productId: id,
+        quantity: count,
+      });
+
+      if (res.status === 200) {
+        toast.success("Сагсанд амжилттай нэмлээ");
+      }
+    } catch (error) {
+      console.log("Failed to add cart", error);
+      toast.error("Сагсанд нэмэхэд алдаа гарлаа");
+    }
+    console.log("cart", user?._id, id, count);
+  };
   // console.log("count", count);
+
+  useEffect(() => {
+    getAllProducts();
+    getProduct();
+  }, []);
 
   return (
     <main>
@@ -152,7 +178,10 @@ export default function Detail() {
               </div>
               <div>
                 <p className="text-xl font-bold mb-2">{product?.price}₮</p>
-                <Button className="bg-[#2563EB] px-9 py-2 rounded-full text-sm">
+                <Button
+                  className="bg-[#2563EB] px-9 py-2 rounded-full text-sm"
+                  onClick={addToCart}
+                >
                   Сагсанд нэмэх
                 </Button>
               </div>

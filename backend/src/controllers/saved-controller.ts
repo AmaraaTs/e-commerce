@@ -58,47 +58,47 @@ export const createSaved = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteSaved = async (req: Request, res: Response) => {
-  const { userId } = req.body;
-  const { productId } = req.params;
-  try {
-    const findUserSaved = await Saved.findOne({ user: userId });
+// export const deleteSaved = async (req: Request, res: Response) => {
+//   const { userId } = req.body;
+//   const { productId } = req.params;
+//   try {
+//     const findUserSaved = await Saved.findOne({ user: userId });
 
-    if (!findUserSaved) {
-      return res.status(400).json({
-        message: "Хэрэглэгч олдсонгүй",
-      });
-    }
+//     if (!findUserSaved) {
+//       return res.status(400).json({
+//         message: "Хэрэглэгч олдсонгүй",
+//       });
+//     }
 
-    const findSavedIndex = findUserSaved.products.findIndex(
-      (item) => item.product.toString() === productId
-    );
+//     const findSavedIndex = findUserSaved.products.findIndex(
+//       (item) => item.product.toString() === productId
+//     );
 
-    if (!findSavedIndex) {
-      return res.status(400).json({
-        message: "Хадгалсан бараа олдсонгүй",
-      });
-    }
+//     if (!findSavedIndex) {
+//       return res.status(400).json({
+//         message: "Хадгалсан бараа олдсонгүй",
+//       });
+//     }
 
-    console.log(findSavedIndex);
+//     console.log(findSavedIndex);
 
-    if (findSavedIndex > -1) {
-      findUserSaved.products.splice(findSavedIndex, 1);
-    } else {
-      return res.status(400).json({
-        message: "Хадгалсан бараа устгасангүй",
-      });
-    }
+//     if (findSavedIndex > -1) {
+//       findUserSaved.products.splice(findSavedIndex, 1);
+//     } else {
+//       return res.status(400).json({
+//         message: "Хадгалсан бараа устгасангүй",
+//       });
+//     }
 
-    const updatedCart = await findUserSaved.save();
-    res.status(200).json({
-      message: "deleted saved",
-      updatedCart,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({
-      message: "failed to delete carts",
-    });
-  }
-};
+//     const updatedCart = await findUserSaved.save();
+//     res.status(200).json({
+//       message: "deleted saved",
+//       updatedCart,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(400).json({
+//       message: "failed to delete carts",
+//     });
+//   }
+// };

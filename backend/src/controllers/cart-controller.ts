@@ -1,21 +1,25 @@
 import { Request, Response } from "express";
 import Cart from "../models/cart.model";
 
-export const getAllCartProduct = async (req: Request, res: Response) => {
+export const getCartProduct = async (req: Request, res: Response) => {
+  const { id } = req.user;
   try {
-    const { userId } = req.query;
-    const cartProducts = await Cart.find({ user: userId })
-      .populate("user")
-      .populate("products.product")
-      .exec();
+    // const { userId } = req.query;
+    // const cartProducts = await Cart.find({ user: userId })
+    //   .populate("user")
+    //   .populate("products.product")
+    //   .exec();
+    const cartProducts = await Cart.findOne({ user: id }).populate(
+      "products.product"
+    );
     res.status(200).json({
-      message: "success to get all cart products",
+      message: "success to get cart products",
       cartProducts: cartProducts,
     });
     console.log("Cart product", cartProducts);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "failed to get all cart products", error });
+    res.status(400).json({ message: "failed to get cart products", error });
   }
 };
 
