@@ -14,6 +14,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Rating, Star } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
+import { useUser } from "@/provider/user-provider";
 
 // interface IProduct {
 //   name: string;
@@ -23,6 +24,7 @@ import "@smastrom/react-rating/style.css";
 // }
 
 export default function Detail() {
+  const { user } = useUser();
   const router = useRouter();
   const { id } = useParams();
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -63,6 +65,18 @@ export default function Detail() {
     activeFillColor: "#FDE047",
     inactiveFillColor: "#FFFFFF",
   };
+  // console.log("user", user);
+
+  // const addToCart = async () => {
+  //   try {
+  //     const response = await axios.post(`${apiUrl}/cart/create-cart`, {
+  //       userId: user?._id,
+  //       productId: id,
+  //       quantity: productQuantity,
+  //     });
+  //   } catch (error) {}
+  // };
+  // console.log("count", count);
 
   return (
     <main>

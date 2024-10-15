@@ -44,6 +44,7 @@ const getDiscountedPrice = (price: number, discount: number) => {
 
 export const ProductCard = ({ product }: { product: IProduct }) => {
   const { user, setUser } = useContext(UserContext);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
 
   const postSavedProduct = async (productId: string) => {
     // console.log("productId", productId);
@@ -61,8 +62,30 @@ export const ProductCard = ({ product }: { product: IProduct }) => {
     // console.log("Res", response.data);
   };
 
+  // const deleteSavedProduct = async (productId: string) => {
+  //   console.log("productId", productId);
+  //   try {
+  //     const response = await axios.delete(
+  //       `${apiUrl}/api/v1/saved/${product._id}`,
+  //       {
+  //         userId: user?._id,
+  //       }
+  //     );
+  //     if (response.status === 200) {
+  //       console.log("res", response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("There was an error signing in:", error);
+  //   }
+  // console.log("Res", response.data);
+  // };
+
+  // useEffect(() => {
+  //   postSavedProduct(), deleteSavedProduct();
+  // }, [isSaved]);
+
   return (
-    <>
+    <div className="relative">
       <Link href={"/product/" + product._id}>
         <div className="relative w-[244px]">
           <Image
@@ -84,10 +107,16 @@ export const ProductCard = ({ product }: { product: IProduct }) => {
       <Heart
         size={22}
         strokeWidth={1}
-        // className="absolute top-4 right-4"
+        className="absolute top-4 right-8 "
         onClick={() => postSavedProduct(product?._id)}
       />
-    </>
+      <Heart
+        size={22}
+        strokeWidth={1}
+        className="absolute top-4 right-16 "
+        // onClick={() => deleteSavedProduct(product?._id)}
+      />
+    </div>
   );
 };
 
