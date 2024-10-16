@@ -18,6 +18,7 @@ import { Label } from "@radix-ui/react-label";
 import axios from "axios";
 import { apiUrl } from "@/app/utils/util";
 import { UserContext } from "@/provider/user-provider";
+import { toast } from "react-toastify";
 
 const getDiscountedPrice = (price: number, discount: number) => {
   return price - (price * discount) / 100;
@@ -208,25 +209,54 @@ export const CartProductCard = ({
   const [totalSalesOne, setTotalSalesOne] = useState<number>(0);
   const { product } = productCart;
   const [count, setCount] = useState<number>(productCart.quantity);
+
+  const updateQuantity = async () => {
+    const userToken = localStorage.getItem("token");
+    try {
+      const response = await axios.put(
+        `${apiUrl}/api/v1/cart/update-cart`,
+        {
+          productId: product._id,
+          changedQuantity: count,
+        },
+        { headers: { Authorization: `Bearer ${userToken}` } }
+      );
+
+      if (response.status === 200) {
+        // toast.success("Successfully updated");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // toast.error("Failed to update to cart");
+    }
+  };
+
   const minus = () => {
     if (count === 1) {
       setCount(1);
+      updateQuantity();
     } else {
       setCount(count - 1);
+      updateQuantity();
     }
   };
   const add = () => {
     setCount(count + 1);
-  };
-  const calculateTotal = () => {
-    setTotalSalesOne(product.price * product.quantity);
+    updateQuantity();
   };
 
-  console.log("TOTAL: ", product.price, product.quantity);
+  const calculateTotal = () => {
+    setTotalSalesOne(product.price * productCart.quantity);
+  };
+
+  // console.log("TOTAL: ", product.price, productCart.quantity);
 
   useEffect(() => {
+    updateQuantity();
     calculateTotal();
-  }, [product]);
+  }, [count]);
+
+  // console.log("Count", count);
 
   return (
     <div className="flex justify-between gap-6 border-[1px] border-[#ECEDF0] rounded-2xl p-4">
@@ -254,7 +284,9 @@ export const CartProductCard = ({
             +
           </button>
         </div>
-        <p className="text-base mt-2 font-bold">{totalSalesOne}₮</p>
+        <p className="text-base mt-2 font-bold">
+          {totalSalesOne.toLocaleString()}₮
+        </p>
       </div>
       <PiTrashLight size={24} />
     </div>

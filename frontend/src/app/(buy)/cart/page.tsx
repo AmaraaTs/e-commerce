@@ -38,7 +38,7 @@ export default function Cart() {
         return;
       }
 
-      const response = await axios.get(`${apiUrl}/cart/get-cart`, {
+      const response = await axios.get(`${apiUrl}/api/v1/cart/get-cart`, {
         headers: { Authorization: `Bearer ${userToken}` },
       });
 

@@ -82,7 +82,7 @@ export default function Detail() {
 
   const addToCart = async () => {
     try {
-      const res = await axios.post(`${apiUrl}/cart/create-cart`, {
+      const res = await axios.post(`${apiUrl}/api/v1/cart/create-cart`, {
         userId: user?._id,
         productId: id,
         quantity: count,
