@@ -2,7 +2,6 @@
 import { IProduct, ISaved } from "@/app/utils/interfaces";
 import { apiUrl } from "@/app/utils/util";
 import { SavedProductCard } from "@/components/product-card";
-import { products } from "@/lib/data";
 import { UserContext } from "@/provider/user-provider";
 import axios from "axios";
 import { IconURL } from "next/dist/lib/metadata/types/metadata-types";
@@ -15,9 +14,22 @@ export default function Save() {
   const [count, setCount] = useState<number>(0);
 
   const getAllSavedProducts = async () => {
-    const response = await axios.get(`${apiUrl}/api/v1/saved`);
-    setProducts(response.data.savedProducts);
-    // console.log("Res", response.data);
+    try {
+      const userToken = localStorage.getItem("token");
+      if (!userToken) {
+        console.log("No user token found");
+        return;
+      }
+      const response = await axios.get(`${apiUrl}/api/v1/saved`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      if (response.status === 200) {
+        setProducts(response.data.savedProducts);
+        console.log("Ress", response.data.savedProducts);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const countSaved = () => {
@@ -32,8 +44,11 @@ export default function Save() {
 
   useEffect(() => {
     getAllSavedProducts();
+  }, []);
+
+  useEffect(() => {
     countSaved();
-  }, [user]);
+  }, [products]);
 
   return (
     <main className=" bg-[#f7f7f8] pt-[60px] pb-24">

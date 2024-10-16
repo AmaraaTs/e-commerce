@@ -102,3 +102,35 @@ export const createSaved = async (req: Request, res: Response) => {
 //     });
 //   }
 // };
+
+export const deleteSaved = async (req: Request, res: Response) => {
+  const { id } = req.user;
+  const { productId } = req.body;
+  try {
+    // 1. find user cart
+    const savedArr = await Saved.findOne({ user: id });
+    if (!savedArr) {
+      return res.status(400).json({
+        message: "not found user",
+      });
+    }
+
+    // 2. find product
+    const findProduct = savedArr.products.findIndex(
+      (item) => item.product.toString() === productId
+    );
+
+    savedArr.products.splice(findProduct, 1);
+
+    const updatedCart = await savedArr.save();
+    res.status(200).json({
+      message: "delete saved product",
+      updatedCart,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      message: "failed to delete saved product",
+    });
+  }
+};

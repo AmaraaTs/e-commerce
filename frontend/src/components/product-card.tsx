@@ -46,6 +46,54 @@ const getDiscountedPrice = (price: number, discount: number) => {
 export const ProductCard = ({ product }: { product: IProduct }) => {
   const { user, setUser } = useContext(UserContext);
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [products, setProducts] = useState<ISaved[]>([]);
+
+  const getAllSavedProducts = async () => {
+    try {
+      const userToken = localStorage.getItem("token");
+      if (!userToken) {
+        console.log("No user token found");
+        return;
+      }
+      const response = await axios.get(`${apiUrl}/api/v1/saved`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      if (response.status === 200) {
+        setProducts(response.data.savedProducts);
+        // console.log("Ress", response.data.savedProducts);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  // const isSavedCheck = () => {
+  //   {
+  //     products.map((productItem) => {
+  //       productItem.products.map((pro) => {
+  //         if (pro?.product._id === product?._id) {
+  //           return setIsSaved(true);
+  //         } else {
+  //           return setIsSaved(false);
+  //         }
+  //       });
+  //     });
+  //   }
+  // };
+
+  const isSavedCheck = () => {
+    let found = false;
+
+    products.forEach((productItem) => {
+      productItem.products.forEach((pro) => {
+        if (pro?.product._id === product?._id) {
+          found = true;
+        }
+      });
+    });
+
+    setIsSaved(found); // Set the final result
+  };
 
   const postSavedProduct = async (productId: string) => {
     // console.log("productId", productId);
@@ -56,6 +104,7 @@ export const ProductCard = ({ product }: { product: IProduct }) => {
       });
       if (response.status === 200) {
         console.log("res", response.data);
+        getAllSavedProducts(), isSavedCheck();
       }
     } catch (error) {
       console.error("There was an error signing in:", error);
@@ -63,27 +112,38 @@ export const ProductCard = ({ product }: { product: IProduct }) => {
     // console.log("Res", response.data);
   };
 
-  // const deleteSavedProduct = async (productId: string) => {
-  //   console.log("productId", productId);
-  //   try {
-  //     const response = await axios.delete(
-  //       `${apiUrl}/api/v1/saved/${product._id}`,
-  //       {
-  //         userId: user?._id,
-  //       }
-  //     );
-  //     if (response.status === 200) {
-  //       console.log("res", response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("There was an error signing in:", error);
-  //   }
-  // console.log("Res", response.data);
-  // };
+  const deleteSaved = async () => {
+    const userToken = localStorage.getItem("token");
+    try {
+      const response = await axios.delete(
+        `${apiUrl}/api/v1/saved/delete-saved`,
+        {
+          headers: { Authorization: `Bearer ${userToken}` },
+          data: { productId: product._id },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Successfully deleted saved product");
+        getAllSavedProducts(), isSavedCheck();
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to delete saved product");
+    }
+  };
 
   // useEffect(() => {
   //   postSavedProduct(), deleteSavedProduct();
   // }, [isSaved]);
+
+  useEffect(() => {
+    getAllSavedProducts(); // Fetch the saved products initially
+  }, []); // Empty dependency array ensures this runs once on mount
+
+  useEffect(() => {
+    isSavedCheck(); // Check if the product is saved whenever 'products' change
+  }, [products, product]);
 
   return (
     <div className="relative">
@@ -105,18 +165,22 @@ export const ProductCard = ({ product }: { product: IProduct }) => {
           </div>
         </div>
       </Link>
-      <Heart
-        size={22}
-        strokeWidth={1}
-        className="absolute top-4 right-8 "
-        onClick={() => postSavedProduct(product?._id)}
-      />
-      <Heart
-        size={22}
-        strokeWidth={1}
-        className="absolute top-4 right-16 "
-        // onClick={() => deleteSavedProduct(product?._id)}
-      />
+      {isSaved ? (
+        <Heart
+          size={22}
+          strokeWidth={1}
+          className="absolute top-4 right-8 "
+          onClick={deleteSaved}
+          color="red"
+        />
+      ) : (
+        <Heart
+          size={22}
+          strokeWidth={1}
+          className="absolute top-4 right-8 "
+          onClick={() => postSavedProduct(product?._id)}
+        />
+      )}
     </div>
   );
 };
@@ -177,6 +241,27 @@ export const SavedProductCard = ({
   productCart: ISavedProducts;
 }) => {
   const { product } = productCart;
+
+  const deleteSaved = async () => {
+    const userToken = localStorage.getItem("token");
+    try {
+      const response = await axios.delete(
+        `${apiUrl}/api/v1/saved/delete-saved`,
+        {
+          headers: { Authorization: `Bearer ${userToken}` },
+          data: { productId: product._id },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Successfully deleted saved product");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to delete saved product");
+    }
+  };
+
   return (
     <div className="flex w-full rounded-2xl border-[1px] border[#ECEDF0] p-4 bg-white">
       <Link href={"/product/" + product._id}>
@@ -195,7 +280,13 @@ export const SavedProductCard = ({
           Сагсанд нэмэх
         </Button>
       </div>
-      <Heart color="red" size={24} strokeWidth={1} className="ml-8" />
+      <Heart
+        color="red"
+        size={24}
+        strokeWidth={1}
+        className="ml-8"
+        onClick={deleteSaved}
+      />
     </div>
   );
 };
@@ -231,6 +322,23 @@ export const CartProductCard = ({
     }
   };
 
+  const deleteCart = async () => {
+    const userToken = localStorage.getItem("token");
+    try {
+      const response = await axios.delete(`${apiUrl}/api/v1/cart/delete-cart`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+        data: { productId: product._id },
+      });
+
+      if (response.status === 200) {
+        toast.success("Successfully deleted");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to delete cart");
+    }
+  };
+
   const minus = () => {
     if (count === 1) {
       setCount(1);
@@ -252,11 +360,11 @@ export const CartProductCard = ({
   // console.log("TOTAL: ", product.price, productCart.quantity);
 
   useEffect(() => {
-    updateQuantity();
     calculateTotal();
+    updateQuantity();
   }, [count]);
 
-  // console.log("Count", count);
+  console.log("Count", count);
 
   return (
     <div className="flex justify-between gap-6 border-[1px] border-[#ECEDF0] rounded-2xl p-4">
@@ -288,7 +396,7 @@ export const CartProductCard = ({
           {totalSalesOne.toLocaleString()}₮
         </p>
       </div>
-      <PiTrashLight size={24} />
+      <PiTrashLight size={24} onClick={deleteCart} />
     </div>
   );
 };
