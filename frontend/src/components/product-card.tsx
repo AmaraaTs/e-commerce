@@ -172,6 +172,7 @@ export const ProductCard = ({ product }: { product: IProduct }) => {
           className="absolute top-4 right-8 "
           onClick={deleteSaved}
           color="red"
+          fill="red"
         />
       ) : (
         <Heart
@@ -282,6 +283,7 @@ export const SavedProductCard = ({
       </div>
       <Heart
         color="red"
+        fill="red"
         size={24}
         strokeWidth={1}
         className="ml-8"

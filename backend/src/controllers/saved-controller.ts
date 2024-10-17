@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import Saved from "../models/saved.model";
 
 export const getAllSavedProduct = async (req: Request, res: Response) => {
+  const { id } = req.user;
   try {
-    const savedProducts = await Saved.find({})
+    const savedProducts = await Saved.find({ user: id })
       .populate("user")
       .populate("products.product")
       .exec();

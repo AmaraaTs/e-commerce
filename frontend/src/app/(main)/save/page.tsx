@@ -56,7 +56,7 @@ export default function Save() {
         <div>
           <h1 className="text-xl font-bold mb-4">
             Хадгалсан бараа
-            <span className="font-medium text-[#5E6166]">({count})</span>
+            <span className="font-medium text-[#5E6166] ml-1">({count})</span>
           </h1>
           {products.map((productItem) => {
             if (productItem.user.email === user?.email) {

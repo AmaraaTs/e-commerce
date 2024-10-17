@@ -1,5 +1,5 @@
 "use client";
-import { IProduct } from "@/app/utils/interfaces";
+import { IProduct, ISaved } from "@/app/utils/interfaces";
 import { apiUrl } from "@/app/utils/util";
 import { Hero } from "@/components/home/page";
 import { FeaturedProductCard, ProductCard } from "@/components/product-card";
@@ -33,6 +33,8 @@ export default function Detail() {
   const [rating, setRating] = useState(5);
   const [isOpenDetail, setIsOpenDetail] = useState<boolean>(false);
   const [product, setProduct] = useState<IProduct | null>(null);
+  const [savedProducts, setSavedProducts] = useState<ISaved[]>([]);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
 
   const getAllProducts = async () => {
     try {
@@ -99,6 +101,85 @@ export default function Detail() {
   };
   // console.log("count", count);
 
+  const getAllSavedProducts = async () => {
+    try {
+      const userToken = localStorage.getItem("token");
+      if (!userToken) {
+        console.log("No user token found");
+        return;
+      }
+      const response = await axios.get(`${apiUrl}/api/v1/saved`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      if (response.status === 200) {
+        setSavedProducts(response.data.savedProducts);
+        // console.log("Ress", response.data.savedProducts);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const isSavedCheck = () => {
+    let found = false;
+
+    savedProducts.forEach((productItem) => {
+      productItem.products.forEach((pro) => {
+        if (pro?.product._id === id) {
+          found = true;
+        }
+      });
+    });
+
+    setIsSaved(found); // Set the final result
+  };
+
+  const postSavedProduct = async () => {
+    // console.log("productId", productId);
+    try {
+      const response = await axios.post(`${apiUrl}/api/v1/saved`, {
+        userId: user?._id,
+        productId: id,
+      });
+      if (response.status === 200) {
+        console.log("res", response.data);
+        getAllSavedProducts(), isSavedCheck();
+      }
+    } catch (error) {
+      console.error("There was an error signing in:", error);
+    }
+    // console.log("Res", response.data);
+  };
+
+  const deleteSaved = async () => {
+    const userToken = localStorage.getItem("token");
+    try {
+      const response = await axios.delete(
+        `${apiUrl}/api/v1/saved/delete-saved`,
+        {
+          headers: { Authorization: `Bearer ${userToken}` },
+          data: { productId: id },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Successfully deleted saved product");
+        getAllSavedProducts(), isSavedCheck();
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to delete saved product");
+    }
+  };
+
+  useEffect(() => {
+    getAllSavedProducts(); // Fetch the saved products initially
+  }, []); // Empty dependency array ensures this runs once on mount
+
+  useEffect(() => {
+    isSavedCheck(); // Check if the product is saved whenever 'products' change
+  }, [savedProducts, id]);
+
   useEffect(() => {
     getAllProducts();
     getProduct();
@@ -144,7 +225,24 @@ export default function Detail() {
               )}
               <div className="flex gap-2 items-center">
                 <p className="text-2xl font-bold">{product?.name}</p>
-                <Heart size={20} strokeWidth={1} className="" />
+                {isSaved ? (
+                  <Heart
+                    size={20}
+                    strokeWidth={1}
+                    // className="absolute top-4 right-8 "
+                    onClick={deleteSaved}
+                    color="red"
+                    fill="red"
+                  />
+                ) : (
+                  <Heart
+                    size={20}
+                    strokeWidth={1}
+                    // className="absolute top-4 right-8 "
+                    onClick={postSavedProduct}
+                  />
+                )}
+                {/* <Heart size={20} strokeWidth={1} className="" /> */}
               </div>
               <p className="text-base w-[400px]">{product?.description}</p>
               <div>
@@ -177,7 +275,9 @@ export default function Detail() {
                 </button>
               </div>
               <div>
-                <p className="text-xl font-bold mb-2">{product?.price}₮</p>
+                <p className="text-xl font-bold mb-2">
+                  {product?.price.toLocaleString()}₮
+                </p>
                 <Button
                   className="bg-[#2563EB] px-9 py-2 rounded-full text-sm"
                   onClick={addToCart}
