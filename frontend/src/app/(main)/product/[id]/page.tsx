@@ -1,5 +1,5 @@
 "use client";
-import { IProduct, ISaved } from "@/app/utils/interfaces";
+import { IComment, IProduct, ISaved } from "@/app/utils/interfaces";
 import { apiUrl } from "@/app/utils/util";
 import { Hero } from "@/components/home/page";
 import { FeaturedProductCard, ProductCard } from "@/components/product-card";
@@ -16,6 +16,7 @@ import { Rating, Star } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { useUser } from "@/provider/user-provider";
 import { toast } from "react-toastify";
+import { set } from "date-fns";
 
 // interface IProduct {
 //   name: string;
@@ -31,10 +32,14 @@ export default function Detail() {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [bigImgIdx, setBigImgIdx] = useState<number>(0);
   const [rating, setRating] = useState(5);
+  const [avgRating, setAvgRating] = useState<number>(3);
   const [isOpenDetail, setIsOpenDetail] = useState<boolean>(false);
   const [product, setProduct] = useState<IProduct | null>(null);
   const [savedProducts, setSavedProducts] = useState<ISaved[]>([]);
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [comments, setComments] = useState<IComment[]>([]);
+  const [comment, setComment] = useState<string>();
+  const [isCommented, setIsCommented] = useState<boolean>(false);
 
   const getAllProducts = async () => {
     try {
@@ -172,6 +177,49 @@ export default function Detail() {
     }
   };
 
+  const getComments = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/v1/comment/${id}`);
+      if (response.status === 200) {
+        setComments(response.data.filteredComments);
+      }
+    } catch (error) {
+      console.log("Error fetching data", error);
+    }
+  };
+
+  const isYouComment = () => {
+    let boo = false;
+    comments.map((comment) => {
+      if (comment.user._id === user?._id) {
+        return (boo = true);
+      }
+    });
+    setIsCommented(boo);
+  };
+
+  const postComment = async () => {
+    try {
+      const userToken = localStorage.getItem("token");
+      const response = await axios.post(
+        `${apiUrl}/api/v1/comment/create-comment`,
+        {
+          productId: id,
+          comment: comment,
+          rate: rating,
+        },
+        {
+          headers: { Authorization: `Bearer ${userToken}` },
+        }
+      );
+      if (response.status === 200) {
+        console.log("res", response.data);
+      }
+    } catch (error) {
+      console.error("There was an error posting comment:", error);
+    }
+  };
+
   useEffect(() => {
     getAllSavedProducts(); // Fetch the saved products initially
   }, []); // Empty dependency array ensures this runs once on mount
@@ -183,7 +231,11 @@ export default function Detail() {
   useEffect(() => {
     getAllProducts();
     getProduct();
+    getComments();
+    isYouComment();
   }, []);
+
+  console.log("comment", comment);
 
   return (
     <main>
@@ -314,65 +366,82 @@ export default function Detail() {
                 <div className="flex gap-1 items-center  mt-1">
                   <Rating
                     style={{ maxWidth: 100 }}
-                    value={rating}
+                    value={avgRating}
                     className="h-[20px] w-[20px]"
                     itemStyles={starStyles}
                     readOnly
                   />
 
-                  <p className="text-[#09090B] text-sm font-bold">4.6</p>
-                  <span className="text-[#71717A] text-sm ">(24)</span>
+                  <p className="text-[#09090B] text-sm font-bold">
+                    {avgRating}
+                  </p>
+                  <span className="text-[#71717A] text-sm ">
+                    ({comments?.length})
+                  </span>
                 </div>
               </div>
               {/* commends */}
               {isOpenDetail ? (
                 <>
                   <div className="mt-6">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center">
-                        <p className="text-sm text-[#09090B] font-bold mr-1">
-                          Saraa
-                        </p>
-                        <div className="flex gap-1">
-                          <Rating
-                            style={{ maxWidth: 100 }}
-                            value={rating}
-                            className="h-[16px] w-[16px]"
-                            itemStyles={starStyles}
-                            readOnly
-                          />
+                    {comments.map((comment) => {
+                      // setRating(comment.products[0].rate);
+                      return (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center">
+                            <p className="text-sm text-[#09090B] font-bold mr-1">
+                              {comment?.user.firstname}
+                            </p>
+                            <div className="flex gap-1">
+                              <Rating
+                                style={{ maxWidth: 100 }}
+                                value={comment?.products[0]?.rate}
+                                className="h-[16px] w-[16px]"
+                                itemStyles={starStyles}
+                                readOnly
+                              />
+                            </div>
+                          </div>
+                          <p className="text-[#71717A] text-sm ">
+                            {comment?.products[0]?.comment}
+                          </p>
                         </div>
-                      </div>
-                      <p className="text-[#71717A] text-sm ">
-                        Ваав материал ёстой гоё байна 😍
+                      );
+                    })}
+                  </div>
+                  {isCommented ? (
+                    <></>
+                  ) : (
+                    <div className="rounded-2xl bg-[#F4F4F5] p-6 mt-6">
+                      <p className="text-sm text-[#09090B] font-medium">
+                        Одоор үнэлэх:
                       </p>
-                    </div>
-                  </div>
-                  <div className="rounded-2xl bg-[#F4F4F5] p-6 mt-6">
-                    <p className="text-sm text-[#09090B] font-medium">
-                      Одоор үнэлэх:
-                    </p>
-                    <div className="flex mt-2">
-                      <Rating
-                        style={{ maxWidth: 100 }}
-                        value={rating}
-                        className="h-[20px] w-[20px]"
-                        itemStyles={starStyles}
-                        onChange={setRating}
-                        isRequired
+                      <div className="flex mt-2">
+                        <Rating
+                          style={{ maxWidth: 100 }}
+                          value={rating}
+                          className="h-[20px] w-[20px]"
+                          itemStyles={starStyles}
+                          onChange={setRating}
+                          isRequired
+                        />
+                      </div>
+                      <p className="text-sm text-[#09090B] font-medium mt-6 mb-2">
+                        Сэтгэгдэл үлдээх:
+                      </p>
+                      <Input
+                        placeholder="Энд бичнэ үү"
+                        className="bg-white border-[1px] border-[#E4E4E7] text-sm text-[#09090B] rounded-md px-3 py-2 h-[94px]"
+                        onChange={(e) => setComment(e.target.value)}
                       />
+                      <Button
+                        className="bg-[#2563EB] px-9 py-2 rounded-full text-sm mt-6 font-medium"
+                        onClick={postComment}
+                      >
+                        Үнэлэх
+                      </Button>
                     </div>
-                    <p className="text-sm text-[#09090B] font-medium mt-6 mb-2">
-                      Сэтгэгдэл үлдээх:
-                    </p>
-                    <Input
-                      placeholder="Энд бичнэ үү"
-                      className="bg-white border-[1px] border-[#E4E4E7] text-sm text-[#09090B] rounded-md px-3 py-2 h-[94px]"
-                    />
-                    <Button className="bg-[#2563EB] px-9 py-2 rounded-full text-sm mt-6 font-medium">
-                      Үнэлэх
-                    </Button>
-                  </div>
+                  )}
                 </>
               ) : null}
             </div>

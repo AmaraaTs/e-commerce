@@ -2,19 +2,41 @@ import { Request, Response } from "express";
 import Comment from "../models/comment.model";
 
 export const getComment = async (req: Request, res: Response) => {
-  const { userId, productId } = req.body;
+  const { productId } = req.params;
   try {
     const productComments = await Comment.find({
-      user: userId,
-      "products.product": productId,
-    })
-      .populate("user")
-      .populate("products.product");
+      // "products.product": productId, // Correct query for nested product inside the array
+    }).populate("user");
+    // .populate("products.product");
+
+    const isCommentHave = productComments.map((comment) => {
+      return comment.products.filter(
+        (product) => String(product.product) === String(productId)
+      );
+    });
+
+    console.log("iscommenthave", isCommentHave);
+
+    if (!isCommentHave) {
+      return res.status(401).json({
+        message: "not found comment",
+      });
+    }
+
+    const filteredComments = productComments.map((comment) => {
+      return {
+        ...comment.toObject(), // Use toObject to avoid issues with Mongoose documents
+        products: comment.products.filter(
+          (product) => String(product.product) === String(productId)
+        ),
+      };
+    });
+
     res.status(200).json({
       message: "success to get all comments",
-      productComments: productComments,
+      filteredComments: filteredComments,
     });
-    console.log("product Comments", productComments);
+    console.log("product Comments", filteredComments);
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: "failed to get all comments", error });

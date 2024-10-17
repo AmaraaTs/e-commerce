@@ -55,3 +55,9 @@ export interface ICartProducts {
   product: IProduct;
   quantity: number;
 }
+
+export interface IComment {
+  _id: string;
+  user: IUser;
+  products: [{ product: IProduct; comment: string; rate: number }];
+}
