@@ -1,15 +1,10 @@
 "use client";
 import { ICart } from "@/app/utils/interfaces";
 import { apiUrl } from "@/app/utils/util";
-import { CartProductCard, SavedProductCard } from "@/components/product-card";
+import { CartProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
-import { products } from "@/lib/data";
-import { UserContext } from "@/provider/user-provider";
-import { Label } from "@radix-ui/react-label";
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import { PiTrashLight } from "react-icons/pi";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 export default function Cart() {
   // const { user, setUser } = useContext(UserContext);

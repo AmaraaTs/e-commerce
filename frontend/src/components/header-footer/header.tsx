@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { FaRegHeart } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import { Search } from "lucide-react";
-import { IoMdPerson } from "react-icons/io";
 import Link from "next/link";
 import { useUser } from "@/provider/user-provider";
 import { User, LogOut } from "lucide-react";

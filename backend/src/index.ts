@@ -13,8 +13,8 @@ import cartRoute from "./routes/cart-route";
 import commentRoute from "./routes/comment-route";
 
 import { connectDB } from "./config/db";
-import { generateHtmlTemplate } from "./utils/generateHtmlTemplate";
-import { sendEmail } from "./utils/send-email";
+// import { generateHtmlTemplate } from "./utils/generateHtmlTemplate";
+// import { sendEmail } from "./utils/send-email";
 
 const PORT = process.env.PORT || "";
 const MONGO_URI = process.env.MONGO_URI || "";

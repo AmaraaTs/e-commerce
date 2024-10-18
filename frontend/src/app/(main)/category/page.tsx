@@ -1,11 +1,9 @@
 "use client";
 import { ICategory, IProduct } from "@/app/utils/interfaces";
 import { apiUrl } from "@/app/utils/util";
-import { Hero } from "@/components/home/page";
-import { FeaturedProductCard, ProductCard } from "@/components/product-card";
-import { products } from "@/lib/data";
+import { ProductCard } from "@/components/product-card";
 import axios from "axios";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Category() {
   const [products, setProducts] = useState<IProduct[]>([]);

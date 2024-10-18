@@ -1,12 +1,10 @@
 "use client";
 import { IComment, IProduct, ISaved } from "@/app/utils/interfaces";
 import { apiUrl } from "@/app/utils/util";
-import { Hero } from "@/components/home/page";
-import { FeaturedProductCard, ProductCard } from "@/components/product-card";
+import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { products } from "@/lib/data";
 import axios from "axios";
 import { Heart } from "lucide-react";
 import Image from "next/image";
@@ -16,7 +14,6 @@ import { Rating, Star } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { useUser } from "@/provider/user-provider";
 import { toast } from "react-toastify";
-import { set } from "date-fns";
 
 // interface IProduct {
 //   name: string;

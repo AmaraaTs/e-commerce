@@ -4,7 +4,6 @@ import { apiUrl } from "@/app/utils/util";
 import { SavedProductCard } from "@/components/product-card";
 import { UserContext } from "@/provider/user-provider";
 import axios from "axios";
-import { IconURL } from "next/dist/lib/metadata/types/metadata-types";
 import { useContext, useEffect, useState } from "react";
 
 export default function Save() {

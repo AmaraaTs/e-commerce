@@ -2,10 +2,8 @@
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import { formattedPrice } from "@/lib/utils";
-import { Product } from "@/lib/data";
 import { Button } from "./ui/button";
 import {
-  ICart,
   ICartProducts,
   IProduct,
   ISaved,
