@@ -1,5 +1,5 @@
 "use client";
-import { IProduct, ISaved } from "@/app/utils/interfaces";
+import { ISaved } from "@/app/utils/interfaces";
 import { apiUrl } from "@/app/utils/util";
 import { SavedProductCard } from "@/components/product-card";
 import { UserContext } from "@/provider/user-provider";
@@ -7,7 +7,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 
 export default function Save() {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   // console.log("User", user);
   const [products, setProducts] = useState<ISaved[]>([]);
   const [count, setCount] = useState<number>(0);
@@ -60,8 +60,8 @@ export default function Save() {
           {products.map((productItem) => {
             if (productItem.user.email === user?.email) {
               return (
-                <div className="flex flex-col gap-4">
-                  {productItem.products.map((product, idx) => {
+                <div key={productItem._id} className="flex flex-col gap-4">
+                  {productItem.products.map((product) => {
                     return (
                       <SavedProductCard
                         key={product.product._id}

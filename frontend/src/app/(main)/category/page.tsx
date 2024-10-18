@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 export default function Category() {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [catergories, setCategories] = useState<ICategory[]>([]);
-  const [handleCategory, setHandleCategory] = useState<string>();
+  // const [handleCategory, setHandleCategory] = useState<string>();
   const getAllProducts = async () => {
     const response = await axios.get(`${apiUrl}/api/v1/product`);
     setProducts(response.data.products);
@@ -32,9 +32,9 @@ export default function Category() {
   // };
   // console.log("Categories", catergories);
 
-  const letHandleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setHandleCategory(e.target.value);
-  };
+  // const letHandleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setHandleCategory(e.target.value);
+  // };
   // console.log("Handle:", handleCategory);
 
   useEffect(() => {}, []);
@@ -48,11 +48,11 @@ export default function Category() {
               <p className="text-base font-bold">Ангилал</p>
               {catergories.map((category) => {
                 return (
-                  <div className="flex gap-2 mt-4">
+                  <div key={category._id} className="flex gap-2 mt-4">
                     <input
                       type="checkbox"
                       className="checkbox"
-                      onChange={letHandleCategory}
+                      // onChange={letHandleCategory}
                     />
                     <p>{category.name}</p>
                   </div>
@@ -68,7 +68,7 @@ export default function Category() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-y-12 gap-x-5">
-            {products.map((product, index) => {
+            {products.map((product) => {
               return (
                 <>
                   <ProductCard key={product._id} product={product} />

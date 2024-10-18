@@ -89,7 +89,7 @@ export const Header = () => {
       <div className="absolute w-[600px] m-auto bg-lime-300 h-[432px] rounded-2xl p-8 gap-4 overflow-scroll hidden">
         {products.map((product, index) => {
           return (
-            <Link href={"/product/" + product._id}>
+            <Link key={index} href={"/product/" + product._id}>
               <div className="flex gap-6 items-center mb-4">
                 <img
                   src={product.images[0]}

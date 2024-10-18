@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { Heart } from "lucide-react";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Rating, Star } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
@@ -24,12 +24,12 @@ import { toast } from "react-toastify";
 
 export default function Detail() {
   const { user } = useUser();
-  const router = useRouter();
+  // const router = useRouter();
   const { id } = useParams();
   const [products, setProducts] = useState<IProduct[]>([]);
   const [bigImgIdx, setBigImgIdx] = useState<number>(0);
   const [rating, setRating] = useState(5);
-  const [avgRating, setAvgRating] = useState<number>(3);
+  // const [avgRating, setAvgRating] = useState<number>(3);
   const [isOpenDetail, setIsOpenDetail] = useState<boolean>(false);
   const [product, setProduct] = useState<IProduct | null>(null);
   const [savedProducts, setSavedProducts] = useState<ISaved[]>([]);
@@ -243,6 +243,7 @@ export default function Detail() {
               {product?.images?.map((image, idx) => {
                 return (
                   <Image
+                    key={idx}
                     src={image}
                     alt="image1"
                     width={67}
@@ -363,15 +364,13 @@ export default function Detail() {
                 <div className="flex gap-1 items-center  mt-1">
                   <Rating
                     style={{ maxWidth: 100 }}
-                    value={avgRating}
+                    value={rating}
                     className="h-[20px] w-[20px]"
                     itemStyles={starStyles}
                     readOnly
                   />
 
-                  <p className="text-[#09090B] text-sm font-bold">
-                    {avgRating}
-                  </p>
+                  <p className="text-[#09090B] text-sm font-bold">{rating}</p>
                   <span className="text-[#71717A] text-sm ">
                     ({comments?.length})
                   </span>
@@ -381,10 +380,13 @@ export default function Detail() {
               {isOpenDetail ? (
                 <>
                   <div className="mt-6">
-                    {comments.map((comment) => {
+                    {comments.map((comment, idx) => {
                       // setRating(comment.products[0].rate);
                       return (
-                        <div className="flex flex-col gap-1">
+                        <div
+                          key={`comment ${idx}`}
+                          className="flex flex-col gap-1"
+                        >
                           <div className="flex items-center">
                             <p className="text-sm text-[#09090B] font-bold mr-1">
                               {comment?.user.firstname}
@@ -447,7 +449,7 @@ export default function Detail() {
         <div className="mt-20">
           <h3 className="text-[30px] font-bold mb-6">Холбоотой бараа</h3>
           <div className="grid grid-cols-4 gap-y-12 gap-x-5">
-            {products.map((product, index) => {
+            {products.map((product) => {
               return (
                 <>
                   <ProductCard key={product._id} product={product} />

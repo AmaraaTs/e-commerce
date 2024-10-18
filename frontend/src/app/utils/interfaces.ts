@@ -13,16 +13,16 @@ export interface IProduct {
 
 interface IUser {
   _id: string;
-  firstname: String;
-  lastname: String;
-  email: String;
-  password: String;
-  phoneNumber?: String;
-  role: String;
-  profile_img: String;
-  address: String;
-  otp: String;
-  passwordResetToken: String;
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  phoneNumber?: string;
+  role: string;
+  profile_img: string;
+  address: string;
+  otp: string;
+  passwordResetToken: string;
   passwordResetTokenExpire: Date;
   created_at: Date;
   updated_at: Date;

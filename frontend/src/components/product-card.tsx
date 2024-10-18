@@ -42,7 +42,7 @@ const getDiscountedPrice = (price: number, discount: number) => {
 // };
 
 export const ProductCard = ({ product }: { product: IProduct }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [products, setProducts] = useState<ISaved[]>([]);
 
