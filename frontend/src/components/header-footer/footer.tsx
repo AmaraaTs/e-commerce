@@ -17,7 +17,7 @@ export const Footer = () => {
               color="white"
               className="border-[1px] w-12 border-white h-12 rounded-full p-[14px]"
             />
-            <span className="text-white text-sm">(976) 7007-1234</span>
+            <span className="text-white text-sm">(976) 9006-9669</span>
           </div>
           <div className="flex items-center gap-5">
             <Mail
@@ -25,7 +25,7 @@ export const Footer = () => {
               color="white"
               className="border-[1px] w-12 border-white h-12 rounded-full p-[14px]"
             />
-            <span className="text-white text-sm">contact@ecommerce.mn</span>
+            <span className="text-white text-sm">amarjargal.ts01@gmail.mn</span>
           </div>
         </div>
       </div>

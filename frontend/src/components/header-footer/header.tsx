@@ -16,6 +16,9 @@ import { apiUrl } from "@/app/utils/util";
 export const Header = () => {
   const { user, setUser } = useUser();
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
+
   const logOut = () => {
     localStorage.removeItem("token");
     router.push("/login");
@@ -30,6 +33,19 @@ export const Header = () => {
   useEffect(() => {
     getAllProducts();
   }, []);
+
+  useEffect(() => {
+    // Filter products based on search query
+    if (searchQuery) {
+      setFilteredProducts(
+        products.filter((product) =>
+          product.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredProducts([]); // Clear filtered products if no search query
+    }
+  }, [searchQuery, products]);
 
   // useEffect(() => {}, [user]);
   return (
@@ -52,6 +68,8 @@ export const Header = () => {
             type="text"
             placeholder="Бүтээгдэхүүн хайх"
             className="text-[#71717A] text-sm border-none"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <div className="flex gap-6 items-center">
@@ -86,25 +104,29 @@ export const Header = () => {
           {/* <IoMdPerson color="white" size={24} /> */}
         </div>
       </header>
-      <div className="absolute w-[600px] m-auto bg-lime-300 h-[432px] rounded-2xl p-8 gap-4 overflow-scroll hidden">
-        {products.map((product, index) => {
-          return (
-            <Link key={index} href={"/product/" + product._id}>
-              <div className="flex gap-6 items-center mb-4">
-                <img
-                  src={product.images[0]}
-                  alt="photo"
-                  className="h-20 w-20 rounded-2xl"
-                />
-                <div>
-                  <p className="text-base">{product.name}</p>
-                  <p className="mt-1 text-base font-bold">{product.price}</p>
+      {searchQuery && (
+        <div className="absolute w-[600px] ml-[calc(50vw-300px)] bg-white max-h-[432px] rounded-2xl p-8 gap-4 overflow-y-scroll z-10">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <Link key={product._id} href={"/product/" + product._id}>
+                <div className="flex gap-6 items-center mb-4">
+                  <img
+                    src={product.images[0]}
+                    alt="photo"
+                    className="h-20 w-20 rounded-2xl"
+                  />
+                  <div>
+                    <p className="text-base">{product.name}</p>
+                    <p className="mt-1 text-base font-bold">{product.price}</p>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+              </Link>
+            ))
+          ) : (
+            <p className="text-center">Бараа олдсонгүй</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

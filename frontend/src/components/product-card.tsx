@@ -293,8 +293,10 @@ export const SavedProductCard = ({
 
 export const CartProductCard = ({
   productCart,
+  handleQuantityChange,
 }: {
   productCart: ICartProducts;
+  handleQuantityChange: (productId: string, newQuantity: number) => void;
 }) => {
   // console.log("product in Cat", product);
   const [totalSalesOne, setTotalSalesOne] = useState<number>(0);
@@ -314,6 +316,7 @@ export const CartProductCard = ({
       );
 
       if (response.status === 200) {
+        // onQuantityChange();
         // toast.success("Successfully updated");
       }
     } catch (error) {
@@ -343,21 +346,22 @@ export const CartProductCard = ({
     if (count === 1) {
       setCount(1);
       updateQuantity();
+      handleQuantityChange(product._id, count);
     } else {
       setCount(count - 1);
       updateQuantity();
+      handleQuantityChange(product._id, count - 1);
     }
   };
   const add = () => {
     setCount(count + 1);
     updateQuantity();
+    handleQuantityChange(product._id, count + 1);
   };
 
   const calculateTotal = () => {
-    setTotalSalesOne(product.price * productCart.quantity);
+    setTotalSalesOne(product.price * count);
   };
-
-  // console.log("TOTAL: ", product.price, productCart.quantity);
 
   useEffect(() => {
     calculateTotal();

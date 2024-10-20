@@ -1,6 +1,6 @@
 import { LuCheckCircle } from "react-icons/lu";
 
-export default function Cart() {
+export default function Success() {
   return (
     <main className=" bg-[#f7f7f8] pt-[60px] pb-24">
       <section className="  max-w-[1100px] mx-auto min-h-[calc(100vh-468px)]">

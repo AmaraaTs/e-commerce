@@ -3,13 +3,18 @@ import { ICart } from "@/app/utils/interfaces";
 import { apiUrl } from "@/app/utils/util";
 import { CartProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
+// import { useCart } from "@/provider/cart-provider";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Cart() {
   // const { user, setUser } = useContext(UserContext);
   const [carts, setCarts] = useState<ICart>();
-
+  const [grandTotal, setGrandTotal] = useState<number>(0);
+  const router = useRouter();
+  // const { carts } = useCart();
+  // console.log("carts", carts);
   // const [carts, setCarts] = useState<ICart[]>([]);
 
   // const getAllCartProducts = async () => {
@@ -44,9 +49,45 @@ export default function Cart() {
       console.log("Failed to add cart", error);
     }
   };
+
+  const handleQuantityChange = (productId: string, newQuantity: number) => {
+    if (!carts || !carts.products) return;
+    const updatedCarts = { ...carts };
+    const productToUpdate = updatedCarts.products?.find(
+      (p) => p.product._id === productId
+    );
+
+    if (productToUpdate) {
+      productToUpdate.quantity = newQuantity; // Update the quantity
+      setCarts(updatedCarts);
+      calculateGrandTotal(); // Recalculate grand total after quantity change
+    }
+  };
+
+  const calculateGrandTotal = () => {
+    if (!carts) return 0;
+    const total = carts.products.reduce((sum, product) => {
+      return sum + product.product.price * product.quantity;
+    }, 0);
+    setGrandTotal(total);
+  };
+
+  useEffect(() => {
+    calculateGrandTotal(); // Recalculate grand total when carts change
+  }, [carts]);
+
   useEffect(() => {
     getCartProducts();
   }, []);
+
+  // useEffect(() => {
+  //   calculateGrandTotal(); // Call the function to calculate grand total when carts changes
+  // }, [carts]);
+
+  const nextPage = () => {
+    router.push("/address");
+  };
+
   console.log("Carts", carts);
   return (
     <main className=" bg-[#f7f7f8] pt-[60px] pb-24">
@@ -70,26 +111,31 @@ export default function Cart() {
           <h1 className="text-xl font-bold mb-4">
             1. Сагс{" "}
             <span className="text-[#71717A] font-medium">
-              ({carts?.products.length})
+              ({carts?.products?.length || 0})
             </span>
           </h1>
+          {/* Display cart products */}
           <div className="flex flex-col gap-4">
-            {/* map */}
-            {carts?.products.map((product) => {
-              console.log("product", product);
-              return (
+            {carts?.products.length ? (
+              carts.products.map((product) => (
                 <CartProductCard
                   key={product.product._id}
                   productCart={product}
+                  handleQuantityChange={handleQuantityChange}
                 />
-              );
-            })}
+              ))
+            ) : (
+              <p className="w-48 m-auto">Таны сагс хоосон байна..</p>
+            )}
           </div>
           <div className="mt-4 flex justify-between">
             <p className="text-[18px]">Нийт төлөх дүн:</p>
-            <p className="text-xl font-bold">360’000₮</p>
+            <p className="text-xl font-bold">{grandTotal.toLocaleString()}₮</p>
           </div>
-          <Button className="bg-[#2563EB] px-9 py-2 rounded-full text-sm  w-[175px] ml-[calc(100%-175px)] mt-6">
+          <Button
+            className="bg-[#2563EB] px-9 py-2 rounded-full text-sm  w-[175px] ml-[calc(100%-175px)] mt-6"
+            onClick={nextPage}
+          >
             Худалдан авах
           </Button>
         </div>

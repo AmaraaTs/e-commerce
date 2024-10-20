@@ -34,16 +34,37 @@ import { useEffect, useState } from "react";
 import { IProduct } from "./utils/interfaces";
 import axios from "axios";
 import { apiUrl } from "./utils/util";
+import MoonLoader from "react-spinners/ClipLoader";
 
 export default function Home() {
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const getAllProducts = async () => {
-    const response = await axios.get(`${apiUrl}/api/v1/product`);
-    setProducts(response.data.products);
+    try {
+      setLoading(true);
+      const response = await axios.get(`${apiUrl}/api/v1/product`);
+      if (response.status === 200) {
+        setProducts(response.data.products);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   useEffect(() => {
     getAllProducts();
   }, []);
+
+  if (loading)
+    return (
+      <div className="w-full flex justify-center items-center h-[calc(100vh-363px)]">
+        <MoonLoader color={"#000000"} loading={loading} size={100} />
+      </div>
+    );
+
   return (
     <main>
       <Hero />
