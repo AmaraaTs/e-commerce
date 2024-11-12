@@ -266,13 +266,15 @@ export default function Detail() {
           </div>
           <div>
             <div className="mt-[100px] flex flex-col gap-4">
-              {product?.isNew === true ? (
-                <span className="border-[1px] border-[#2563EB] px-[10px] py-[2px] rounded-full text-xs text-[#09090B]">
-                  Шинэ
-                </span>
-              ) : (
-                <span></span>
-              )}
+              <div>
+                {product?.isNew === true ? (
+                  <span className="border-[1px] border-[#2563EB] px-[10px] py-[2px] rounded-full text-xs text-[#09090B]">
+                    Шинэ
+                  </span>
+                ) : (
+                  <span></span>
+                )}
+              </div>
               <div className="flex gap-2 items-center">
                 <p className="text-2xl font-bold">{product?.name}</p>
                 {isSaved ? (

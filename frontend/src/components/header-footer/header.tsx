@@ -113,7 +113,7 @@ export const Header = () => {
                   <img
                     src={product.images[0]}
                     alt="photo"
-                    className="h-20 w-20 rounded-2xl"
+                    className="h-20 w-20 rounded-2xl object-cover"
                   />
                   <div>
                     <p className="text-base">{product.name}</p>

@@ -8,7 +8,7 @@ export interface IProduct {
   isNew?: boolean;
   quantity?: number;
   discount: number;
-  category?: object;
+  category?: ICategory;
 }
 
 interface IUser {

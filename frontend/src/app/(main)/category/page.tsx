@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 export default function Category() {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [catergories, setCategories] = useState<ICategory[]>([]);
-  // const [handleCategory, setHandleCategory] = useState<string>();
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const getAllProducts = async () => {
     const response = await axios.get(`${apiUrl}/api/v1/product`);
     setProducts(response.data.products);
@@ -18,6 +18,23 @@ export default function Category() {
     setCategories(response.data.categories);
     console.log("Cat res data", response.data);
   };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+
+    if (checked) {
+      setSelectedCategories([...selectedCategories, value]);
+    } else {
+      setSelectedCategories(selectedCategories.filter((id) => id !== value));
+    }
+  };
+
+  const filteredProducts = selectedCategories.length
+    ? products.filter((product) =>
+        selectedCategories.includes(product.category?._id ?? "")
+      )
+    : products;
+
   useEffect(() => {
     getAllProducts();
     getAllCategories();
@@ -31,11 +48,6 @@ export default function Category() {
   //   setCount(count + 1);
   // };
   // console.log("Categories", catergories);
-
-  // const letHandleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setHandleCategory(e.target.value);
-  // };
-  // console.log("Handle:", handleCategory);
 
   useEffect(() => {}, []);
 
@@ -52,7 +64,8 @@ export default function Category() {
                     <input
                       type="checkbox"
                       className="checkbox"
-                      // onChange={letHandleCategory}
+                      value={category._id}
+                      onChange={handleCategoryChange}
                     />
                     <p>{category.name}</p>
                   </div>
@@ -68,7 +81,7 @@ export default function Category() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-y-12 gap-x-5">
-            {products.map((product) => {
+            {filteredProducts.map((product) => {
               return (
                 <>
                   <ProductCard key={product._id} product={product} />
